@@ -9,6 +9,5 @@ namespace FisherConfig
         public Variable Variable { get; set; }
         public Remote Remote { get; set; }
         public Info Info { get; set; }
-        public CurrentInfo CurrentInfo { get; set; }
     }
 }
