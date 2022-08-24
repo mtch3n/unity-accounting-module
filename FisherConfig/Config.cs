@@ -1,6 +1,5 @@
 ﻿using FisherConfig.Game;
 using FisherConfig.Machine;
-using FisherConfig.Report;
 
 namespace FisherConfig
 {

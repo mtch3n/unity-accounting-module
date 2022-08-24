@@ -86,6 +86,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Config.cs" />
+        <Compile Include="Exceptions\ConfigNotInitializedException.cs" />
         <Compile Include="Generator.cs" />
         <Compile Include="Game\PlayMode.cs" />
         <Compile Include="Game\Remote.cs" />

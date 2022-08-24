@@ -1,7 +1,5 @@
 using FisherConfig.Game;
 using FisherConfig.Machine;
-using Remote = FisherConfig.Game.Remote;
-using Variable = FisherConfig.Game.Variable;
 
 namespace FisherConfig
 {
@@ -27,7 +25,7 @@ namespace FisherConfig
 
         private Info CreateDefaultInfo()
         {
-            return new Info()
+            return new Info
             {
                 AccountingCount = 0,
                 TypeNo = "test",
@@ -39,7 +37,7 @@ namespace FisherConfig
 
         private Remote CreateDefaultRemote()
         {
-            return new Remote()
+            return new Remote
             {
                 CoinRatio = 0,
                 OpenRatio = 10000,
@@ -55,7 +53,7 @@ namespace FisherConfig
 
         private Variable CreateDefaultVariable()
         {
-            return new Variable()
+            return new Variable
             {
                 MinBet = 10,
                 MaxBet = 9999,
