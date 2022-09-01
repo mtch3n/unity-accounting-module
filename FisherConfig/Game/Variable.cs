@@ -12,6 +12,7 @@
 
         public PlayMode GameMode { get; set; }
 
+        public FireSpeed FireSpeed { get; set; }
         public BulletSpeed BulletSpeed { get; set; }
 
         public TimedFiring TimedFiring { get; set; }
@@ -29,12 +30,19 @@
         public VolumeStep Volume { get; set; }
     }
 
+    public enum FireSpeed
+    {
+        Fast = 2,
+        Normal = 3,
+        Slow = 5
+    }
+
     public enum TimedFiring
     {
-        Fast,
-        Normal,
-        Slow,
-        Disable
+        Fast = 3,
+        Normal = 18,
+        Slow = 48,
+        Disable = 0
     }
 
     public enum BulletSpeed
@@ -72,10 +80,8 @@
         S8
     }
 
-    // I => integer
-    // F => Fraction
-    // I10 => 10
-    // F10 => 1/10
+    // I => integer     I10 => 10
+    // F => Fraction    F10 => 1/10
     public enum LotteryRatio
     {
         I1,

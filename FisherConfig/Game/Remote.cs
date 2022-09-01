@@ -23,27 +23,11 @@
 
     public enum Yxnd
     {
-        Nd0,
-        Nd1,
-        Nd2,
-        Nd3,
-        Nd4,
-        Nd5,
-        Nd6,
-        Nd7,
-        Nd8,
-        Nd9,
-        Nd010,
-        Nd11,
-        Nd12,
-        Nd13,
-        Nd14,
-        Nd15,
-        Nd16,
-        Nd17,
-        Nd18,
-        Nd19,
-        Nd20
+        Low = 120,
+        MidLow = 110,
+        Mid = 97,
+        MidHigh = 80,
+        High = 70
     }
 
     public enum Yxlx

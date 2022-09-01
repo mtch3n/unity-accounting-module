@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FisherConfig.Utils
 {
-    public class Hash
+    public static class Hash
     {
         public static string GetSha256String(string str)
         {
