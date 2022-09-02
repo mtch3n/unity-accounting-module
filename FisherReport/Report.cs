@@ -49,7 +49,7 @@ namespace FisherReport
             return _memReport;
         }
 
-        private void AppendLog()
+        private void AppendLog(int value)
         {
         }
     }

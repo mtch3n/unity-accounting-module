@@ -4,11 +4,11 @@
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-        <ProjectGuid>{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}</ProjectGuid>
+        <ProjectGuid>{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>FisherReport</RootNamespace>
-        <AssemblyName>FisherReport</AssemblyName>
+        <RootNamespace>KV</RootNamespace>
+        <AssemblyName>KV</AssemblyName>
         <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -38,12 +38,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Report.cs" />
-        <Compile Include="Data\ReportLog.cs" />
+        <Compile Include="KVStore.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <Content Include="S_SaveLoad.dll" />
+        <Compile Include="WAL.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

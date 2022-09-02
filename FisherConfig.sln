@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigTest", "ConfigTest\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FisherReport", "FisherReport\FisherReport.csproj", "{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KV", "KV\KV.csproj", "{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,5 +29,9 @@ Global
 		{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB0C0EE2-417B-4A7D-A528-1211B13D49C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
