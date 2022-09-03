@@ -18,11 +18,11 @@ namespace FisherConfig
 
         public Loader(string path, ILogger<Loader> logger = null)
         {
-            _logger = logger ?? NullLogger();
+            _logger = logger ?? NoopLogger();
             _path = FindPath(path);
         }
 
-        private ILogger<Loader> NullLogger()
+        private ILogger<Loader> NoopLogger()
         {
             return new NullLogger<Loader>();
         }

@@ -5,25 +5,20 @@ namespace FisherConfig
 {
     public class Generator
     {
-        private Config NewConfigContainer()
-        {
-            return new Config();
-        }
-
         public Config DefaultConfig()
         {
             var conf = new Config
             {
-                Info = CreateDefaultInfo(),
-                Remote = CreateDefaultRemote(),
-                Variable = CreateDefaultVariable()
+                Info = DefaultInfo(),
+                Remote = DefaultRemote(),
+                Variable = DefaultVariable()
             };
 
             return conf;
         }
 
 
-        private Info CreateDefaultInfo()
+        public Info DefaultInfo()
         {
             return new Info
             {
@@ -35,7 +30,7 @@ namespace FisherConfig
             };
         }
 
-        private Remote CreateDefaultRemote()
+        public Remote DefaultRemote()
         {
             return new Remote
             {
@@ -51,7 +46,7 @@ namespace FisherConfig
             };
         }
 
-        private Variable CreateDefaultVariable()
+        public Variable DefaultVariable()
         {
             return new Variable
             {
@@ -67,12 +62,12 @@ namespace FisherConfig
                 Players = Players.P6,
                 BackgroundVolume = VolumeMode.PlayAll,
                 Volume = VolumeStep.S4,
-                GameMode = CreateDefaultPlayMode(),
+                GameMode = DefaultPlayMode(),
                 LotteryRatio = LotteryRatio.I1
             };
         }
 
-        private PlayMode CreateDefaultPlayMode()
+        public PlayMode DefaultPlayMode()
         {
             return new PlayMode
             {

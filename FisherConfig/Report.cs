@@ -1,13 +1,12 @@
-﻿using System;
-using FisherReport.Data;
+﻿using FisherConfig.Data;
 
-namespace FisherReport
+namespace FisherConfig
 {
     public class Report
     {
         private readonly ReportLog _memReport = new ReportLog();
 
-        Report()
+        private Report()
         {
             // if (Instance.TimeStamp == 0)
             // {
