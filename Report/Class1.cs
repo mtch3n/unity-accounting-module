@@ -1,11 +1,7 @@
-﻿using FisherConfig.Data;
-
-namespace FisherConfig
+﻿namespace Report
 {
     public class Report
     {
-        private readonly ReportLog _memReport = new ReportLog();
-
         public void LogOpen(int value)
         {
             _memReport.Open += value;
@@ -34,15 +30,6 @@ namespace FisherConfig
         public void LogPointSpend(int value)
         {
             _memReport.PointSpend += value;
-        }
-
-        public ReportLog Log()
-        {
-            return _memReport;
-        }
-
-        private void AppendLog(int value)
-        {
         }
     }
 }
