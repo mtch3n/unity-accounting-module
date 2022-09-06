@@ -14,28 +14,28 @@ namespace Report
 
         private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
 
-        private readonly Option opt;
+        private readonly Option _opt;
 
-        private int index;
+        private int _index;
 
         public WAL(Option opt)
         {
-            this.opt = opt;
+            this._opt = opt;
         }
 
         private string WALPath()
         {
-            return Path.GetFullPath(opt.Path + "/wal.dat");
+            return Path.GetFullPath(_opt.Path + "/wal.dat");
         }
 
         private string CommitPath()
         {
-            return Path.GetFullPath(opt.Path + "/commit.dat");
+            return Path.GetFullPath(_opt.Path + "/commit.dat");
         }
 
         public void Append(ReportLog rLog)
         {
-            if (index >= WalLimit) Commit();
+            if (_index >= WalLimit) Commit();
 
             var sData = rLog.Serialize();
 
@@ -48,7 +48,7 @@ namespace Report
             entry.AppendBinaryFile();
 
             _reportLogs.Add(rLog);
-            index++;
+            _index++;
         }
 
         public void Commit()
@@ -83,7 +83,7 @@ namespace Report
 
         private void RollOver()
         {
-            index = 0;
+            _index = 0;
             _reportLogs.Clear();
 
             File.Delete(WALPath());
@@ -123,7 +123,7 @@ namespace Report
 
         public void Open()
         {
-            var entry = new LogEntry(opt.Path);
+            var entry = new LogEntry(_opt.Path);
         }
     }
 
