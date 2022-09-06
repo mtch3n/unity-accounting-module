@@ -1,35 +1,149 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using Report.Data;
 
 namespace Report
 {
     public class WAL
     {
-        private const int WalLimit = 1000;
+        private const int WalLimit = 10;
 
-        private List<LogEntry> entries = new List<LogEntry>();
+        private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
+
+        private readonly Option opt;
+
         private int index;
 
-        private int fileWriter;
-
-        public void Append(ReportType type, int value)
+        public WAL(Option opt)
         {
-            var seg = new LogEntry()
+            this.opt = opt;
+        }
+
+        private string WALPath()
+        {
+            return Path.GetFullPath(opt.Path + "/wal.dat");
+        }
+
+        private string CommitPath()
+        {
+            return Path.GetFullPath(opt.Path + "/commit.dat");
+        }
+
+        public void Append(ReportLog rLog)
+        {
+            if (index >= WalLimit) Commit();
+
+            var sData = rLog.Serialize();
+
+            var entry = new LogEntry(WALPath())
             {
-                index = index,
-                type = type,
-                value = value
+                data = sData,
+                size = (ulong)sData.Length
             };
 
-            Write(seg);
+            entry.AppendBinaryFile();
 
+            _reportLogs.Add(rLog);
             index++;
         }
 
-        private void Write(LogEntry entry)
+        public void Commit()
         {
-            entries.Clear();
-            entries.Add(entry);
+            if (!File.Exists(CommitPath())) CreateNewLedger();
+
+            var ledger = GetLedger();
+
+            ledger.Open += _reportLogs.Where(x => x.type == ReportType.Open).Sum(x => x.value);
+            ledger.Wash += _reportLogs.Where(x => x.type == ReportType.Wash).Sum(x => x.value);
+            ledger.InsertCoin += _reportLogs.Where(x => x.type == ReportType.InsertCoin).Sum(x => x.value);
+            ledger.RefundCoin += _reportLogs.Where(x => x.type == ReportType.RefundCoin).Sum(x => x.value);
+            ledger.PointGain += _reportLogs.Where(x => x.type == ReportType.PointGain).Sum(x => x.value);
+            ledger.PointSpend += _reportLogs.Where(x => x.type == ReportType.PointSpend).Sum(x => x.value);
+
+            WriteLedger(ledger.Serialize());
+
+            RollOver();
+        }
+
+        public Ledger GetLedger()
+        {
+            if (!File.Exists(CommitPath())) CreateNewLedger();
+
+            var fs = new FileStream(CommitPath(), FileMode.Open);
+            var formatter = new BinaryFormatter();
+            var l = (Ledger)formatter.Deserialize(fs);
+
+            fs.Close();
+            return l;
+        }
+
+        private void RollOver()
+        {
+            index = 0;
+            _reportLogs.Clear();
+
+            File.Delete(WALPath());
+        }
+
+        private void CreateNewLedger()
+        {
+            var ledger = new Ledger();
+            WriteLedger(ledger.Serialize());
+        }
+
+        private void WriteLedger(byte[] data)
+        {
+            using (var fileStream =
+                   new FileStream(CommitPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+            {
+                using (var bw = new BinaryWriter(fileStream))
+                {
+                    bw.Write(data);
+                }
+            }
+        }
+
+        public void Flush()
+        {
+        }
+
+        // public int Read(int idx)
+        // {
+        //     var entry = entries[idx];
+        //
+        //     if (entry.type == (ushort)ReportType.Report)
+        //     {
+        //         var value = BitConverter.ToInt32(entry.data, 0);
+        //     }
+        // }
+
+        public void Open()
+        {
+            var entry = new LogEntry(opt.Path);
+        }
+    }
+
+    [Serializable]
+    public class ReportLog
+    {
+        public ReportType type;
+        public int value;
+
+        public byte[] Serialize()
+        {
+            byte[] bytes;
+            IFormatter formatter = new BinaryFormatter();
+            using (var stream = new MemoryStream())
+            {
+                formatter.Serialize(stream, this);
+                bytes = stream.ToArray();
+            }
+
+            return bytes;
         }
     }
 }

@@ -46,6 +46,7 @@
         <Compile Include="Data\Ledger.bak"/>
         <Compile Include="Data\Ledger.cs"/>
         <Compile Include="LogEntry.cs"/>
+        <Compile Include="Option.cs"/>
         <Compile Include="Properties\AssemblyInfo.cs"/>
         <Compile Include="WAL.cs"/>
     </ItemGroup>
@@ -61,6 +62,7 @@
         <Content Include="Plugins\System.Data.SQLite.dll"/>
         <Content Include="Plugins\x64\sqlite3.dll"/>
         <Content Include="Plugins\x86\sqlite3.dll"/>
+        <Content Include="S_SaveLoad.dll"/>
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Dapper" Version="2.0.123"/>

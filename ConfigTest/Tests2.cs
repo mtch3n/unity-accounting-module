@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using Report;
+using Report.Data;
 
 namespace ConfigTest
 {
@@ -8,9 +10,19 @@ namespace ConfigTest
         [Test]
         public void TestReport()
         {
-            var a = new Class1();
+            var opt = new Option
+            {
+                Path = "/home/chenmt/tmp/"
+            };
 
-            a.Test();
+            var wal = new WAL(opt);
+
+            for (var i = 0; i < 100; i++)
+                wal.Append(new ReportLog
+                {
+                    type = ReportType.Open, value = 1
+                });
+
 
             Assert.IsTrue(true);
         }
