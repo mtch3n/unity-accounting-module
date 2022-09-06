@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
     <PropertyGroup>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -35,40 +35,24 @@
         <Reference Include="Mono.Data.Sqlite">
             <HintPath>Plugins\Mono.Data.Sqlite.dll</HintPath>
         </Reference>
-        <Reference Include="System"/>
-        <Reference Include="System.Core"/>
-        <Reference Include="System.Data"/>
-        <Reference Include="System.Xml"/>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Class1.cs"/>
-        <Compile Include="Data\Config.cs"/>
-        <Compile Include="Data\Ledger.bak"/>
-        <Compile Include="Data\Ledger.cs"/>
-        <Compile Include="LogEntry.cs"/>
-        <Compile Include="Option.cs"/>
-        <Compile Include="Properties\AssemblyInfo.cs"/>
-        <Compile Include="WAL.cs"/>
+        <Compile Include="Class1.cs" />
+        <Compile Include="Data\Ledger.cs" />
+        <Compile Include="LogEntry.cs" />
+        <Compile Include="Option.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="WAL.cs" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="Plugins\Android\libs\armeabi-v7a.meta"/>
-        <Content Include="Plugins\Android\libs\armeabi-v7a\libsqlite3.so"/>
-        <Content Include="Plugins\Android\libs\armeabi-v7a\libsqlite3.so.meta"/>
-        <Content Include="Plugins\Android\libs\x86.meta"/>
-        <Content Include="Plugins\Android\libs\x86\libsqlite3.so"/>
-        <Content Include="Plugins\Android\libs\x86\libsqlite3.so.meta"/>
-        <Content Include="Plugins\Mono.Data.Sqlite.dll"/>
-        <Content Include="Plugins\System.Data.dll"/>
-        <Content Include="Plugins\System.Data.SQLite.dll"/>
-        <Content Include="Plugins\x64\sqlite3.dll"/>
-        <Content Include="Plugins\x86\sqlite3.dll"/>
-        <Content Include="S_SaveLoad.dll"/>
+        <PackageReference Include="Dapper" Version="2.0.123" />
+        <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="Dapper" Version="2.0.123"/>
-        <PackageReference Include="Dapper.SqlBuilder" Version="2.0.78"/>
-    </ItemGroup>
-    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
