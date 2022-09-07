@@ -20,7 +20,7 @@ namespace ConfigTest
             for (var i = 0; i < 100; i++)
                 wal.Append(new ReportLog
                 {
-                    type = ReportType.Open, value = 1
+                    Type = ReportType.Open, Value = 1
                 });
 
 

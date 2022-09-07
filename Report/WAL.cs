@@ -57,12 +57,12 @@ namespace Report
 
             var ledger = GetLedger();
 
-            ledger.Open += _reportLogs.Where(x => x.type == ReportType.Open).Sum(x => x.value);
-            ledger.Wash += _reportLogs.Where(x => x.type == ReportType.Wash).Sum(x => x.value);
-            ledger.InsertCoin += _reportLogs.Where(x => x.type == ReportType.InsertCoin).Sum(x => x.value);
-            ledger.RefundCoin += _reportLogs.Where(x => x.type == ReportType.RefundCoin).Sum(x => x.value);
-            ledger.PointGain += _reportLogs.Where(x => x.type == ReportType.PointGain).Sum(x => x.value);
-            ledger.PointSpend += _reportLogs.Where(x => x.type == ReportType.PointSpend).Sum(x => x.value);
+            ledger.Open += _reportLogs.Where(x => x.Type == ReportType.Open).Sum(x => x.Value);
+            ledger.Wash += _reportLogs.Where(x => x.Type == ReportType.Wash).Sum(x => x.Value);
+            ledger.InsertCoin += _reportLogs.Where(x => x.Type == ReportType.InsertCoin).Sum(x => x.Value);
+            ledger.RefundCoin += _reportLogs.Where(x => x.Type == ReportType.RefundCoin).Sum(x => x.Value);
+            ledger.PointGain += _reportLogs.Where(x => x.Type == ReportType.PointGain).Sum(x => x.Value);
+            ledger.PointSpend += _reportLogs.Where(x => x.Type == ReportType.PointSpend).Sum(x => x.Value);
 
             WriteLedger(ledger.Serialize());
 
@@ -130,8 +130,8 @@ namespace Report
     [Serializable]
     public class ReportLog
     {
-        public ReportType type;
-        public int value;
+        public ReportType Type;
+        public int Value;
 
         public byte[] Serialize()
         {
