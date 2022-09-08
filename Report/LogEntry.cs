@@ -6,7 +6,7 @@ namespace Report
     {
         private readonly string _path;
         public byte[] data;
-        public ulong size; // 8 Bytes
+        public ulong size;
 
         public LogEntry(string path)
         {
@@ -16,12 +16,10 @@ namespace Report
         public void AppendBinaryFile()
         {
             if (!File.Exists(_path))
-            {
-                using (FileStream fs = File.Create(_path))
+                using (var fs = File.Create(_path))
                 {
                     fs.Close();
                 }
-            }
 
             using (var fileStream = new FileStream(_path, FileMode.Append, FileAccess.Write, FileShare.None))
             using (var bw = new BinaryWriter(fileStream))
@@ -31,7 +29,7 @@ namespace Report
             }
         }
 
-        // public byte[] LoadEntry()
+        // public byte[] OpenBinaryFile()
         // {
         //     using (var fileStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
         //     using (var br = new BinaryReader(fileStream))

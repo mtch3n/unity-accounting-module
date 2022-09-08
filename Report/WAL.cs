@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using Report.Data;
+using Report.Exceptions;
 
 namespace Report
 {
@@ -12,15 +13,15 @@ namespace Report
     {
         private const int WalLimit = 10;
 
-        private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
-
         private readonly Option _opt;
+
+        private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
 
         private int _index;
 
         public WAL(Option opt)
         {
-            this._opt = opt;
+            _opt = opt;
         }
 
         private string WALPath()
@@ -35,7 +36,7 @@ namespace Report
 
         public void Append(ReportLog rLog)
         {
-            if (_index >= WalLimit) Commit();
+            if (_index >= _opt.CommitThreshold) Commit();
 
             var sData = rLog.Serialize();
 
@@ -107,23 +108,97 @@ namespace Report
             }
         }
 
-        public void Flush()
+        public void FlushOnDisk()
         {
+            if (_index > 0) Commit();
         }
-
-        // public int Read(int idx)
-        // {
-        //     var entry = entries[idx];
-        //
-        //     if (entry.type == (ushort)ReportType.Report)
-        //     {
-        //         var value = BitConverter.ToInt32(entry.data, 0);
-        //     }
-        // }
 
         public void Open()
         {
-            var entry = new LogEntry(_opt.Path);
+            if (!File.Exists(WALPath())) return;
+            LoadWalSegments();
+        }
+
+        private List<BytePositions> epos = new List<BytePositions>();
+
+        public byte[] Read(int index)
+        {
+            if (index > epos.Count)
+            {
+                throw new IndexOutOfRangeException("Entry index out of range");
+            }
+
+
+            byte[] buf = new byte[SizeOfEntry(index)];
+            using (BinaryReader reader = new BinaryReader(new FileStream(WALPath(), FileMode.Open)))
+            {
+                reader.BaseStream.Seek(EntryDataStart(index), SeekOrigin.Begin);
+                reader.Read(buf, 0, SizeOfEntry(index));
+            }
+
+            return buf;
+        }
+
+        private int SizeOfEntry(int index)
+        {
+            var ulongLength = sizeof(ulong);
+
+            return epos[index].End - epos[index].Pos - ulongLength;
+        }
+
+        private int EntryDataStart(int index)
+        {
+            var ulongLength = sizeof(ulong);
+
+            return epos[index].Pos + ulongLength - 1;
+        }
+
+        private void LoadWalSegments()
+        {
+            var data = ReadWalFile();
+
+            if (data.Length == 0) throw new InvalidWalException("Log entry is corrupted");
+
+            int pos = 0;
+            for (_index = 0; data.Length > 0; _index++)
+            {
+                var n = LoadNextBinaryEntry(data);
+
+                data = data.Skip(n).Take(data.Length - 1).ToArray();
+                epos.Add(new BytePositions(pos, pos + n));
+                pos += n;
+            }
+        }
+
+        private int LoadNextBinaryEntry(byte[] data)
+        {
+            var ulongLength = sizeof(ulong);
+
+            // data_size + data
+            var size = BitConverter.ToUInt64(data.Take(ulongLength).ToArray(), 0);
+
+            return ulongLength + (int)size;
+        }
+
+        private byte[] ReadWalFile()
+        {
+            using (var fileStream = new FileStream(WALPath(), FileMode.Open, FileAccess.Read))
+            using (var br = new BinaryReader(fileStream))
+            {
+                return br.ReadBytes((int)fileStream.Length);
+            }
+        }
+    }
+
+    public class BytePositions
+    {
+        public int Pos; // byte position
+        public int End; // one byte past pos
+
+        public BytePositions(int pos, int end)
+        {
+            Pos = pos;
+            End = end;
         }
     }
 
