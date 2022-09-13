@@ -27,20 +27,19 @@ namespace ConfigTest
 
             Assert.IsTrue(true);
         }
-        
+
         [Test]
         public void TestLoad()
         {
-            var opt = new Option
+            var wal = new WAL(new Option
             {
                 Path = "/home/chenmt/tmp/"
-            };
-            
-            var wal = new WAL(opt);
-            
+            });
+
             wal.Open();
-            
-            wal.Read(0);
+            // wal.Read(0);
+
+            var test = wal.GetWAL();
 
             Assert.IsTrue(true);
         }

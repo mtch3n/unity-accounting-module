@@ -11,13 +11,13 @@ namespace Report
 {
     public class WAL
     {
-        private const int WalLimit = 10;
-
         private readonly Option _opt;
 
         private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
 
         private int _index;
+
+        private readonly List<BytePositions> epos = new List<BytePositions>();
 
         public WAL(Option opt)
         {
@@ -29,14 +29,9 @@ namespace Report
             return Path.GetFullPath(_opt.Path + "/wal.dat");
         }
 
-        private string CommitPath()
-        {
-            return Path.GetFullPath(_opt.Path + "/commit.dat");
-        }
-
         public void Append(ReportLog rLog)
         {
-            if (_index >= _opt.CommitThreshold) Commit();
+            // if (_index >= _opt.CommitThreshold) Commit();
 
             var sData = rLog.Serialize();
 
@@ -52,37 +47,7 @@ namespace Report
             _index++;
         }
 
-        public void Commit()
-        {
-            if (!File.Exists(CommitPath())) CreateNewLedger();
-
-            var ledger = GetLedger();
-
-            ledger.Open += _reportLogs.Where(x => x.Type == ReportType.Open).Sum(x => x.Value);
-            ledger.Wash += _reportLogs.Where(x => x.Type == ReportType.Wash).Sum(x => x.Value);
-            ledger.InsertCoin += _reportLogs.Where(x => x.Type == ReportType.InsertCoin).Sum(x => x.Value);
-            ledger.RefundCoin += _reportLogs.Where(x => x.Type == ReportType.RefundCoin).Sum(x => x.Value);
-            ledger.PointGain += _reportLogs.Where(x => x.Type == ReportType.PointGain).Sum(x => x.Value);
-            ledger.PointSpend += _reportLogs.Where(x => x.Type == ReportType.PointSpend).Sum(x => x.Value);
-
-            WriteLedger(ledger.Serialize());
-
-            RollOver();
-        }
-
-        public Ledger GetLedger()
-        {
-            if (!File.Exists(CommitPath())) CreateNewLedger();
-
-            var fs = new FileStream(CommitPath(), FileMode.Open);
-            var formatter = new BinaryFormatter();
-            var l = (Ledger)formatter.Deserialize(fs);
-
-            fs.Close();
-            return l;
-        }
-
-        private void RollOver()
+        public void Flush()
         {
             _index = 0;
             _reportLogs.Clear();
@@ -90,47 +55,44 @@ namespace Report
             File.Delete(WALPath());
         }
 
-        private void CreateNewLedger()
+        public List<ReportLog> GetReportLogs()
         {
-            var ledger = new Ledger();
-            WriteLedger(ledger.Serialize());
-        }
-
-        private void WriteLedger(byte[] data)
-        {
-            using (var fileStream =
-                   new FileStream(CommitPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-            {
-                using (var bw = new BinaryWriter(fileStream))
-                {
-                    bw.Write(data);
-                }
-            }
-        }
-
-        public void FlushOnDisk()
-        {
-            if (_index > 0) Commit();
+            return _reportLogs;
         }
 
         public void Open()
         {
             if (!File.Exists(WALPath())) return;
             LoadWalSegments();
+            LoadReportLogs();
+        }
+        
+        public WAL GetWAL()
+        {
+            return this;
         }
 
-        private List<BytePositions> epos = new List<BytePositions>();
+        private void LoadReportLogs()
+        {
+            for (var i = 0; i < epos.Count; i++) _reportLogs.Add(Deserialize<ReportLog>(Read(i)));
+        }
+
+        private T Deserialize<T>(byte[] param)
+        {
+            using (var ms = new MemoryStream(param))
+            {
+                IFormatter br = new BinaryFormatter();
+                return (T)br.Deserialize(ms);
+            }
+        }
 
         public byte[] Read(int index)
         {
-            if (index > epos.Count)
-            {
-                throw new IndexOutOfRangeException("Entry index out of range");
-            }
+            if (index > epos.Count) throw new IndexOutOfRangeException("Entry index out of range");
 
+            var buf = new byte[SizeOfEntry(index)];
 
-            byte[] buf = new byte[SizeOfEntry(index)];
-            using (BinaryReader reader = new BinaryReader(new FileStream(WALPath(), FileMode.Open)))
+            using (var reader = new BinaryReader(new FileStream(WALPath(), FileMode.Open)))
             {
                 reader.BaseStream.Seek(EntryDataStart(index), SeekOrigin.Begin);
                 reader.Read(buf, 0, SizeOfEntry(index));
@@ -150,7 +112,7 @@ namespace Report
         {
             var ulongLength = sizeof(ulong);
 
-            return epos[index].Pos + ulongLength - 1;
+            return epos[index].Pos + ulongLength;
         }
 
         private void LoadWalSegments()
@@ -159,7 +121,7 @@ namespace Report
 
             if (data.Length == 0) throw new InvalidWalException("Log entry is corrupted");
 
-            int pos = 0;
+            var pos = 0;
             for (_index = 0; data.Length > 0; _index++)
             {
                 var n = LoadNextBinaryEntry(data);
@@ -192,8 +154,8 @@ namespace Report
 
     public class BytePositions
     {
-        public int Pos; // byte position
         public int End; // one byte past pos
+        public int Pos; // byte position
 
         public BytePositions(int pos, int end)
         {
