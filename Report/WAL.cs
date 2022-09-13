@@ -31,8 +31,6 @@ namespace Report
 
         public void Append(ReportLog rLog)
         {
-            // if (_index >= _opt.CommitThreshold) Commit();
-
             var sData = rLog.Serialize();
 
             var entry = new LogEntry(WALPath())
@@ -55,9 +53,14 @@ namespace Report
             File.Delete(WALPath());
         }
 
-        public List<ReportLog> GetReportLogs()
+        public List<ReportLog> ReportLogs()
         {
             return _reportLogs;
+        }
+
+        public int Count()
+        {
+            return _index;
         }
 
         public void Open()
@@ -66,8 +69,8 @@ namespace Report
             LoadWalSegments();
             LoadReportLogs();
         }
-        
-        public WAL GetWAL()
+
+        public WAL Instance()
         {
             return this;
         }

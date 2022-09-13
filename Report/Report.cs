@@ -7,7 +7,6 @@ namespace Report
 {
     public class Report
     {
-        private int _index;
         private Ledger _memLedger;
         private readonly Option _opt;
         private readonly WAL _wal;
@@ -17,14 +16,17 @@ namespace Report
             _opt = option;
             _wal = new WAL(option);
 
-            PrepareWAL();
+            Prepare();
         }
 
-        private void PrepareWAL()
+        private void Prepare()
         {
+            _memLedger = LoadLedger();
             _wal.Open();
+
+            Commit();
         }
-        
+
         private string CommitPath()
         {
             return Path.GetFullPath(_opt.Path + "/commit.dat");
@@ -32,30 +34,26 @@ namespace Report
 
         public void Commit()
         {
-            var ledger = LoadLedger();
+            _memLedger.Open += Sun(ReportType.Open);
+            _memLedger.Wash += Sun(ReportType.Wash);
+            _memLedger.InsertCoin += Sun(ReportType.InsertCoin);
+            _memLedger.RefundCoin += Sun(ReportType.RefundCoin);
+            _memLedger.PointGain += Sun(ReportType.PointGain);
+            _memLedger.PointSpend += Sun(ReportType.PointSpend);
 
-            ledger.Open += Sun(ReportType.Open);
-            ledger.Wash += Sun(ReportType.Wash);
-            ledger.InsertCoin += Sun(ReportType.InsertCoin);
-            ledger.RefundCoin += Sun(ReportType.RefundCoin);
-            ledger.PointGain += Sun(ReportType.PointGain);
-            ledger.PointSpend += Sun(ReportType.PointSpend);
-
-            WriteLedger(ledger.Serialize());
+            WriteLedger(_memLedger.Serialize());
 
             RollOver();
         }
 
         private void RollOver()
         {
-            _index = 0;
             _wal.Flush();
         }
 
         private int Sun(ReportType type)
         {
-            var reportLogs = _wal.GetReportLogs();
-            return reportLogs.Where(x => x.Type == type).Sum(x => x.Value);
+            return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => x.Value);
         }
 
         private Ledger LoadLedger()
@@ -140,11 +138,9 @@ namespace Report
 
         private void Append(ReportLog log)
         {
-            if (_index >= _opt.CommitThreshold) Commit();
+            if (_wal.Count() >= _opt.CommitThreshold) Commit();
 
             _wal.Append(log);
-
-            _index++;
         }
     }
 }
