@@ -14,7 +14,7 @@ namespace Test
         {
             return new Option
             {
-                Path = "/home/chenmt/tmp/config.json",
+                Path = "/home/chenmt/tmp/config.json"
             };
         }
 

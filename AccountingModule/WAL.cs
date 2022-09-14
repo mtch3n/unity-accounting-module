@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using AccountingModule.Data;
 using AccountingModule.Exceptions;
+using AccountingModule.Util;
 
 namespace AccountingModule
 {
@@ -83,16 +84,7 @@ namespace AccountingModule
 
         private void LoadReportLogs()
         {
-            for (var i = 0; i < epos.Count; i++) _reportLogs.Add(Deserialize<ReportLog>(Read(i)));
-        }
-
-        private T Deserialize<T>(byte[] param)
-        {
-            using (var ms = new MemoryStream(param))
-            {
-                IFormatter br = new BinaryFormatter();
-                return (T)br.Deserialize(ms);
-            }
+            for (var i = 0; i < epos.Count; i++) _reportLogs.Add(RawData.Deserialize<ReportLog>(Read(i)));
         }
 
         public byte[] Read(int index)

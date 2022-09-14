@@ -22,6 +22,11 @@ namespace AccountingModule.Data
 
         public long TimeStamp { get; set; }
 
+        public long Profit()
+        {
+            return Open - Wash;
+        }
+
         public byte[] Serialize()
         {
             byte[] bytes;

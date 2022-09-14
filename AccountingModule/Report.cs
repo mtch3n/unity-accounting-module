@@ -21,7 +21,7 @@ namespace AccountingModule
 
         private void Prepare()
         {
-            _memLedger = LoadLedger();
+            _memLedger = LoadLedger(CommitPath());
             _wal.Open();
 
             if (_opt.DiscardLogs) Discard();
@@ -41,14 +41,46 @@ namespace AccountingModule
             Commit();
         }
 
+        #region PathUtils
+
         private string CommitPath()
         {
-            return Path.GetFullPath(_opt.Path + "/accounting.bin");
+            return Path.GetFullPath(_opt.Path + "/data.bin");
+        }
+
+        private string ArchivePath()
+        {
+            return Path.GetFullPath(_opt.Path + "/archive.bin");
+        }
+
+        #endregion
+
+        public void Archive()
+        {
+            Commit();
+
+            var newArchive = NewLedgerArchive();
+            WriteLedger(ArchivePath(), newArchive.Serialize());
+
+            Reset();
+        }
+
+        private Ledger NewLedgerArchive()
+        {
+            var ledgerHistory = LoadLedger(ArchivePath());
+            ledgerHistory.Open += _memLedger.Open;
+            ledgerHistory.Wash += _memLedger.Wash;
+            ledgerHistory.InsertCoin += _memLedger.InsertCoin;
+            ledgerHistory.PointGain += _memLedger.PointGain;
+            ledgerHistory.PointSpend += _memLedger.PointSpend;
+            ledgerHistory.RefundCoin += _memLedger.RefundCoin;
+
+            return ledgerHistory;
         }
 
         private void Commit()
         {
-            WriteLedger(_memLedger.Serialize());
+            WriteLedger(CommitPath(), _memLedger.Serialize());
             Discard();
         }
 
@@ -70,11 +102,16 @@ namespace AccountingModule
             return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => x.Value);
         }
 
-        private Ledger LoadLedger()
+        private Ledger LoadLedger(string path)
         {
-            if (!File.Exists(CommitPath())) CreateNewLedger();
+            if (!File.Exists(path))
+            {
+                var ledger = new Ledger();
+                WriteLedger(CommitPath(), ledger.Serialize());
+                return ledger;
+            }
 
-            var fs = new FileStream(CommitPath(), FileMode.Open);
+            var fs = new FileStream(path, FileMode.Open);
             var formatter = new BinaryFormatter();
             var l = (Ledger)formatter.Deserialize(fs);
 
@@ -82,16 +119,10 @@ namespace AccountingModule
             return l;
         }
 
-        private void CreateNewLedger()
-        {
-            var ledger = new Ledger();
-            WriteLedger(ledger.Serialize());
-        }
-
-        private void WriteLedger(byte[] data)
+        private void WriteLedger(string path, byte[] data)
         {
             using (var fileStream =
-                   new FileStream(CommitPath(), FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+                   new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
             {
                 using (var bw = new BinaryWriter(fileStream))
                 {
@@ -99,6 +130,36 @@ namespace AccountingModule
                 }
             }
         }
+
+        public Ledger GetLedger()
+        {
+            return _memLedger;
+        }
+
+        public Ledger GetArchive()
+        {
+            return LoadLedger(ArchivePath());
+        }
+
+        private ReportLog NewLogEntry(ReportType type, int value)
+        {
+            return new ReportLog
+            {
+                Type = type,
+                Value = value
+            };
+        }
+
+        private void Append(ReportLog log)
+        {
+            if (_wal.Count() >= _opt.CommitThreshold)
+                if (!_opt.NoCommit)
+                    Commit();
+
+            _wal.Append(log);
+        }
+
+        #region LogReport
 
         public void LogOpen(int value)
         {
@@ -136,27 +197,6 @@ namespace AccountingModule
             _memLedger.PointSpend += value;
         }
 
-        public Ledger GetLedger()
-        {
-            return _memLedger;
-        }
-
-        private ReportLog NewLogEntry(ReportType type, int value)
-        {
-            return new ReportLog
-            {
-                Type = type,
-                Value = value
-            };
-        }
-
-        private void Append(ReportLog log)
-        {
-            if (_wal.Count() >= _opt.CommitThreshold)
-                if (!_opt.NoCommit)
-                    Commit();
-
-            _wal.Append(log);
-        }
+        #endregion
     }
 }
