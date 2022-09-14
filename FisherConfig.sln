@@ -1,15 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FisherConfig", "FisherConfig\FisherConfig.csproj", "{A4C4C3A7-D29E-4738-9B39-95D8042F045D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigModule", "ConfigModule\ConfigModule.csproj", "{A4C4C3A7-D29E-4738-9B39-95D8042F045D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigTest", "ConfigTest\ConfigTest.csproj", "{ABBF2741-394E-4D7F-986D-F1A0C68A3E4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{ABBF2741-394E-4D7F-986D-F1A0C68A3E4C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC} = {9B66D303-77C7-4025-A5B2-5F4F7F3D5CDC}
 		{FB0C0EE2-417B-4A7D-A528-1211B13D49C1} = {FB0C0EE2-417B-4A7D-A528-1211B13D49C1}
 		{7F9D2241-C6A0-49D4-8334-D109B1EA9E72} = {7F9D2241-C6A0-49D4-8334-D109B1EA9E72}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Report", "Report\Report.csproj", "{7F9D2241-C6A0-49D4-8334-D109B1EA9E72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountingModule", "AccountingModule\AccountingModule.csproj", "{7F9D2241-C6A0-49D4-8334-D109B1EA9E72}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
