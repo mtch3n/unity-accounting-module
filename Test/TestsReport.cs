@@ -2,7 +2,7 @@
 using AccountingModule;
 using NUnit.Framework;
 
-namespace Testing
+namespace Test
 {
     [TestFixture]
     public class TestsReport
@@ -10,8 +10,8 @@ namespace Testing
         [Test]
         public void TestReport()
         {
-            File.Delete("/home/chenmt/tmp/wal.dat");
-            File.Delete("/home/chenmt/tmp/commit.dat");
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/accounting.bin");
 
             var opt = new Option
             {
@@ -35,8 +35,8 @@ namespace Testing
         [Test]
         public void TestReportResume()
         {
-            File.Delete("/home/chenmt/tmp/wal.dat");
-            File.Delete("/home/chenmt/tmp/commit.dat");
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/accounting.bin");
 
             var opt = new Option
             {
@@ -62,8 +62,8 @@ namespace Testing
         [Test]
         public void TestReportCommitResume()
         {
-            File.Delete("/home/chenmt/tmp/wal.dat");
-            File.Delete("/home/chenmt/tmp/commit.dat");
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/accounting.bin");
 
             var opt = new Option
             {
@@ -91,8 +91,8 @@ namespace Testing
         [Test]
         public void TestLargeWrite()
         {
-            File.Delete("/home/chenmt/tmp/wal.dat");
-            File.Delete("/home/chenmt/tmp/commit.dat");
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/accounting.bin");
 
             var opt = new Option
             {
@@ -118,8 +118,8 @@ namespace Testing
         [Test]
         public void TestReset()
         {
-            File.Delete("/home/chenmt/tmp/wal.dat");
-            File.Delete("/home/chenmt/tmp/commit.dat");
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/accounting.bin");
 
             var opt = new Option
             {

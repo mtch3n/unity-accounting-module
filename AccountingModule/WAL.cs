@@ -26,7 +26,7 @@ namespace AccountingModule
 
         private string WALPath()
         {
-            return Path.GetFullPath(_opt.Path + "/wal.dat");
+            return Path.GetFullPath(_opt.Path + "/wal.bin");
         }
 
         public void Append(ReportLog rLog)

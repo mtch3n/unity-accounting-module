@@ -1,6 +1,6 @@
 ﻿namespace ConfigModule
 {
-    public class Options
+    public class Option
     {
         public string Path { get; set; }
     }

@@ -2,7 +2,7 @@
 using AccountingModule.Data;
 using NUnit.Framework;
 
-namespace Testing
+namespace Test
 {
     [TestFixture]
     public class TestsWal

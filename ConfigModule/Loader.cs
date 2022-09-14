@@ -1,9 +1,6 @@
-using System;
 using System.IO;
 using ConfigModule.Exceptions;
 using ConfigModule.Utils;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using Newtonsoft.Json;
 
 namespace ConfigModule
@@ -12,26 +9,25 @@ namespace ConfigModule
     {
         private static Config _config;
 
-        private readonly ILogger<Loader> _logger;
+        // private readonly ILogger _logger;
 
         private readonly string _path;
 
-        public Loader(string path, ILogger<Loader> logger = null)
+        public Loader(Option options)
         {
-            _logger = logger ?? NoopLogger();
-            _path = FindPath(path);
+            _path = FindPath(options.Path);
         }
 
-        private ILogger<Loader> NoopLogger()
-        {
-            return new NullLogger<Loader>();
-        }
+        // private ILogger NoopLogger()
+        // {
+        //     return new NullLogger();
+        // }
 
         private string FindPath(string name)
         {
             var p = Path.GetFullPath(name);
 
-            _logger.LogDebug("file exists status: {Exists}", ConfigExists(p));
+            // _logger.LogDebug("file exists status: {Exists}", ConfigExists(p));
 
             return p;
         }
@@ -69,8 +65,8 @@ namespace ConfigModule
         {
             if (_config == null) throw new ConfigNotInitializedException("Make sure to load config before save.");
 
-            var jsonStr = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            _logger.LogDebug("writing config:\n {Json}", jsonStr);
+            // var jsonStr = JsonConvert.SerializeObject(_config, Formatting.Indented);
+            // _logger.LogDebug("writing config:\n {Json}", jsonStr);
 
 
             using var file = File.CreateText(_path);
@@ -78,14 +74,14 @@ namespace ConfigModule
             serializer.Serialize(file, _config);
         }
 
-        private void Validation()
-        {
-            throw new NotImplementedException();
-        }
+        // private void Validation()
+        // {
+        //     throw new NotImplementedException();
+        // }
 
         public void Load(string config = null)
         {
-            _logger.LogDebug("loading config file from path: {Path}", _path);
+            // _logger.LogDebug("loading config file from path: {Path}", _path);
             _config = config != null ? ReadConfigJson(config) : ReadConfigJson();
         }
 

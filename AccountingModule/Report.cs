@@ -43,7 +43,7 @@ namespace AccountingModule
 
         private string CommitPath()
         {
-            return Path.GetFullPath(_opt.Path + "/commit.dat");
+            return Path.GetFullPath(_opt.Path + "/accounting.bin");
         }
 
         private void Commit()
