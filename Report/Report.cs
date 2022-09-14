@@ -24,15 +24,15 @@ namespace Report
             _memLedger = LoadLedger();
             _wal.Open();
 
-            Commit();
+            if (_opt.DiscardLogs)
+            {
+                Discard();
+            }
+
+            Restore();
         }
 
-        private string CommitPath()
-        {
-            return Path.GetFullPath(_opt.Path + "/commit.dat");
-        }
-
-        public void Commit()
+        private void Restore()
         {
             _memLedger.Open += Sun(ReportType.Open);
             _memLedger.Wash += Sun(ReportType.Wash);
@@ -41,12 +41,21 @@ namespace Report
             _memLedger.PointGain += Sun(ReportType.PointGain);
             _memLedger.PointSpend += Sun(ReportType.PointSpend);
 
-            WriteLedger(_memLedger.Serialize());
-
-            RollOver();
+            Commit();
         }
 
-        private void RollOver()
+        private string CommitPath()
+        {
+            return Path.GetFullPath(_opt.Path + "/commit.dat");
+        }
+
+        private void Commit()
+        {
+            WriteLedger(_memLedger.Serialize());
+            Discard();
+        }
+
+        private void Discard()
         {
             _wal.Flush();
         }
@@ -138,7 +147,13 @@ namespace Report
 
         private void Append(ReportLog log)
         {
-            if (_wal.Count() >= _opt.CommitThreshold) Commit();
+            if (_wal.Count() >= _opt.CommitThreshold)
+            {
+                if (!_opt.NoCommit)
+                {
+                    Commit();
+                }
+            }
 
             _wal.Append(log);
         }

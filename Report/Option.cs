@@ -9,6 +9,9 @@ namespace Report
 
         public string Path { get; set; }
         public int CommitThreshold { get; set; }
-        public int DiscardLogs { get; set; }
+        public bool DiscardLogs { get; set; }
+        public bool NoCommit { get; set; }
+        
+        public bool MemWal { get; set; }
     }
 }

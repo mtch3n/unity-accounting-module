@@ -39,6 +39,12 @@ namespace Report
                 size = (ulong)sData.Length
             };
 
+            if (_opt.MemWal)
+            {
+                _reportLogs.Add(rLog);
+                return;
+            }
+
             entry.AppendBinaryFile();
 
             _reportLogs.Add(rLog);
