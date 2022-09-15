@@ -99,13 +99,13 @@ namespace Test
             var opt = new Option
             {
                 Path = "/home/chenmt/tmp/",
-                CommitThreshold = 10000,
+                CommitThreshold = 10,
                 // MemWal = true,
                 NoCommit = false
             };
 
             var rp = new Report(opt);
-            for (var i = 0; i < 99999; i++)
+            for (var i = 0; i < 9999; i++)
             {
                 rp.LogOpen(1);
                 rp.LogWash(1);
@@ -261,22 +261,104 @@ namespace Test
 
             var rp = new Report(opt);
 
-            rp.LogScore(Score.Player1, 1);
-            Assert.AreEqual(1, rp.Score(Score.Player1));
+            rp.LogScore(PlayerScore.PlayerScore1, 1);
+            Assert.AreEqual(1, rp.Score(PlayerScore.PlayerScore1));
 
-            rp.LogScore(Score.Player1, 2);
-            Assert.AreEqual(2, rp.Score(Score.Player1));
+            rp.LogScore(PlayerScore.PlayerScore1, 2);
+            Assert.AreEqual(2, rp.Score(PlayerScore.PlayerScore1));
 
-            rp.LogScore(Score.Player1, 1);
-            Assert.AreEqual(1, rp.Score(Score.Player1));
+            rp.LogScore(PlayerScore.PlayerScore1, 1);
+            Assert.AreEqual(1, rp.Score(PlayerScore.PlayerScore1));
 
-            rp.LogScore(Score.Player1, 5);
-            Assert.AreEqual(5, rp.Score(Score.Player1));
+            rp.LogScore(PlayerScore.PlayerScore1, 5);
+            Assert.AreEqual(5, rp.Score(PlayerScore.PlayerScore1));
 
             rp = new Report(opt);
             rp.Commit();
 
-            Assert.AreEqual(5, rp.Score(Score.Player1));
+            Assert.AreEqual(5, rp.Score(PlayerScore.PlayerScore1));
+        }
+        
+        [Test]
+        public void TestPlayerBet()
+        {
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/archive.bin");
+            File.Delete("/home/chenmt/tmp/data.bin");
+
+            var opt = new Option
+            {
+                Path = "/home/chenmt/tmp/",
+                CommitThreshold = 1
+            };
+
+            var rp = new Report(opt);
+
+            rp.LogBet(PlayerBet.PlayerBet1, 1);
+            Assert.AreEqual(1, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 2);
+            Assert.AreEqual(2, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 1);
+            Assert.AreEqual(1, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 5);
+            Assert.AreEqual(5, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp = new Report(opt);
+            rp.Commit();
+
+            Assert.AreEqual(5, rp.Bet(PlayerBet.PlayerBet1));
+        }
+        
+         [Test]
+        public void TestGenericType()
+        {
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/archive.bin");
+            File.Delete("/home/chenmt/tmp/data.bin");
+
+            var opt = new Option
+            {
+                Path = "/home/chenmt/tmp/",
+                CommitThreshold = 1
+            };
+
+            var rp = new Report(opt);
+
+            rp.LogScore(PlayerScore.PlayerScore1, 1);
+            Assert.AreEqual(1, rp.Score(PlayerScore.PlayerScore1));
+
+            rp.LogScore(PlayerScore.PlayerScore1, 2);
+            Assert.AreEqual(2, rp.Score(PlayerScore.PlayerScore1));
+
+            rp.LogScore(PlayerScore.PlayerScore1, 1);
+            Assert.AreEqual(1, rp.Score(PlayerScore.PlayerScore1));
+
+            rp.LogScore(PlayerScore.PlayerScore1, 5);
+            Assert.AreEqual(5, rp.Score(PlayerScore.PlayerScore1));
+
+            rp = new Report(opt);
+            rp.Commit();
+
+            rp.LogBet(PlayerBet.PlayerBet1, 2);
+            Assert.AreEqual(2, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 7);
+            Assert.AreEqual(7, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 9);
+            Assert.AreEqual(9, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp.LogBet(PlayerBet.PlayerBet1, 2);
+            Assert.AreEqual(2, rp.Bet(PlayerBet.PlayerBet1));
+
+            rp = new Report(opt);
+            rp.Commit();
+
+            Assert.AreEqual(5, rp.Score(PlayerScore.PlayerScore1));
+            Assert.AreEqual(2, rp.Bet(PlayerBet.PlayerBet1));
         }
     }
 }

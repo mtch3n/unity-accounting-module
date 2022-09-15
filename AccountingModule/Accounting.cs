@@ -41,13 +41,22 @@ namespace AccountingModule
             _memJournal.PointSpend += Sun(JournalType.PointSpend);
             _memJournal.Beat += Sun(JournalType.Beat);
 
-            foreach (var p in (Score[])Enum.GetValues(typeof(Score)))
+            foreach (var p in (PlayerScore[])Enum.GetValues(typeof(PlayerScore)))
             {
                 var log = FindLastRecord(p.ToString());
                 if (log == null) continue;
 
                 var val = FindLastRecord(p.ToString()).Value;
                 _memJournal.PlayerScore[p] = BitConverter.ToInt64(val, 0);
+            }
+            
+            foreach (var p in (PlayerBet[])Enum.GetValues(typeof(PlayerBet)))
+            {
+                var log = FindLastRecord(p.ToString());
+                if (log == null) continue;
+
+                var val = FindLastRecord(p.ToString()).Value;
+                _memJournal.PlayerBet[p] = BitConverter.ToInt64(val, 0);
             }
 
             Commit();
@@ -134,13 +143,13 @@ namespace AccountingModule
         {
             return _memJournal;
         }
-
-        public Dictionary<Score, long> Score()
+        
+        public long Bet(PlayerBet player)
         {
-            return _memJournal.PlayerScore;
+            return _memJournal.PlayerBet[player];
         }
 
-        public long Score(Score player)
+        public long Score(PlayerScore player)
         {
             return _memJournal.PlayerScore[player];
         }
@@ -236,10 +245,16 @@ namespace AccountingModule
             _memJournal.Beat += value;
         }
 
-        public void LogScore(Score player, long value)
+        public void LogScore(PlayerScore player, long value)
         {
             Append(NewLogEntry(player.ToString(), BitConverter.GetBytes(value)));
             _memJournal.PlayerScore[player] = value;
+        }
+        
+        public void LogBet(PlayerBet player, long bet)
+        {
+            Append(NewLogEntry(player.ToString(), BitConverter.GetBytes(bet)));
+            _memJournal.PlayerBet[player] = bet;
         }
 
         #endregion
