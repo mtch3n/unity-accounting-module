@@ -163,8 +163,8 @@ namespace AccountingModule
     [Serializable]
     public class WalLog
     {
-        public JournalType Type;
         public string Key;
+        public JournalType Type;
         public byte[] Value;
 
         public byte[] Serialize()

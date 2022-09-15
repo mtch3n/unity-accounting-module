@@ -278,7 +278,7 @@ namespace Test
 
             Assert.AreEqual(5, rp.Score(PlayerScore.PlayerScore1));
         }
-        
+
         [Test]
         public void TestPlayerBet()
         {
@@ -311,8 +311,8 @@ namespace Test
 
             Assert.AreEqual(5, rp.Bet(PlayerBet.PlayerBet1));
         }
-        
-         [Test]
+
+        [Test]
         public void TestGenericType()
         {
             File.Delete("/home/chenmt/tmp/wal.bin");

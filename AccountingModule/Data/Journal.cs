@@ -9,8 +9,8 @@ namespace AccountingModule.Data
     [Serializable]
     public class Journal
     {
-        public Dictionary<PlayerScore, long> PlayerScore = new Dictionary<PlayerScore, long>();
         public Dictionary<PlayerBet, long> PlayerBet = new Dictionary<PlayerBet, long>();
+        public Dictionary<PlayerScore, long> PlayerScore = new Dictionary<PlayerScore, long>();
         public long Open { get; set; }
 
         public long Wash { get; set; }

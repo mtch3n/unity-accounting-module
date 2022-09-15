@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -49,7 +48,7 @@ namespace AccountingModule
                 var val = FindLastRecord(p.ToString()).Value;
                 _memJournal.PlayerScore[p] = BitConverter.ToInt64(val, 0);
             }
-            
+
             foreach (var p in (PlayerBet[])Enum.GetValues(typeof(PlayerBet)))
             {
                 var log = FindLastRecord(p.ToString());
@@ -143,7 +142,7 @@ namespace AccountingModule
         {
             return _memJournal;
         }
-        
+
         public long Bet(PlayerBet player)
         {
             return _memJournal.PlayerBet[player];
@@ -250,7 +249,7 @@ namespace AccountingModule
             Append(NewLogEntry(player.ToString(), BitConverter.GetBytes(value)));
             _memJournal.PlayerScore[player] = value;
         }
-        
+
         public void LogBet(PlayerBet player, long bet)
         {
             Append(NewLogEntry(player.ToString(), BitConverter.GetBytes(bet)));
