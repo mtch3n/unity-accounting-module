@@ -14,7 +14,7 @@ namespace AccountingModule
     {
         private readonly Option _opt;
 
-        private readonly List<ReportLog> _reportLogs = new List<ReportLog>();
+        private readonly List<WalLog> _reportLogs = new List<WalLog>();
 
         private readonly List<BytePositions> epos = new List<BytePositions>();
 
@@ -30,7 +30,7 @@ namespace AccountingModule
             return Path.GetFullPath(_opt.Path + "/wal.bin");
         }
 
-        public void Append(ReportLog rLog)
+        public void Append(WalLog rLog)
         {
             var sData = rLog.Serialize();
 
@@ -60,7 +60,7 @@ namespace AccountingModule
             File.Delete(WALPath());
         }
 
-        public List<ReportLog> ReportLogs()
+        public List<WalLog> ReportLogs()
         {
             return _reportLogs;
         }
@@ -77,14 +77,9 @@ namespace AccountingModule
             LoadReportLogs();
         }
 
-        public WAL Instance()
-        {
-            return this;
-        }
-
         private void LoadReportLogs()
         {
-            for (var i = 0; i < epos.Count; i++) _reportLogs.Add(RawData.Deserialize<ReportLog>(Read(i)));
+            for (var i = 0; i < epos.Count; i++) _reportLogs.Add(RawData.Deserialize<WalLog>(Read(i)));
         }
 
         public byte[] Read(int index)
@@ -166,10 +161,11 @@ namespace AccountingModule
     }
 
     [Serializable]
-    public class ReportLog
+    public class WalLog
     {
         public JournalType Type;
-        public int Value;
+        public string Key;
+        public byte[] Value;
 
         public byte[] Serialize()
         {

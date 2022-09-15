@@ -1,4 +1,5 @@
-﻿using AccountingModule;
+﻿using System;
+using AccountingModule;
 using AccountingModule.Data;
 using NUnit.Framework;
 
@@ -18,9 +19,9 @@ namespace Test
             var wal = new WAL(opt);
 
             for (var i = 0; i < 3; i++)
-                wal.Append(new ReportLog
+                wal.Append(new WalLog
                 {
-                    Type = JournalType.Open, Value = 1
+                    Type = JournalType.Open, Value = BitConverter.GetBytes(1)
                 });
 
             Assert.AreEqual(3, wal.Count());
@@ -39,9 +40,9 @@ namespace Test
             wal.Flush();
 
             for (var i = 0; i < 3; i++)
-                wal.Append(new ReportLog
+                wal.Append(new WalLog
                 {
-                    Type = JournalType.Open, Value = 1
+                    Type = JournalType.Open, Value = BitConverter.GetBytes(1)
                 });
 
             wal = null;

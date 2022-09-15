@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using AccountingModule;
+using AccountingModule.Data;
 using NUnit.Framework;
 
 namespace Test
@@ -100,11 +101,11 @@ namespace Test
                 Path = "/home/chenmt/tmp/",
                 CommitThreshold = 10000,
                 // MemWal = true,
-                NoCommit = true
+                NoCommit = false
             };
 
             var rp = new Report(opt);
-            for (var i = 0; i < 9999; i++)
+            for (var i = 0; i < 99999; i++)
             {
                 rp.LogOpen(1);
                 rp.LogWash(1);
@@ -246,7 +247,7 @@ namespace Test
         }
 
         [Test]
-        public void TestQueryBuilder()
+        public void TestPlayerScore()
         {
             File.Delete("/home/chenmt/tmp/wal.bin");
             File.Delete("/home/chenmt/tmp/archive.bin");
@@ -255,10 +256,27 @@ namespace Test
             var opt = new Option
             {
                 Path = "/home/chenmt/tmp/",
-                CommitThreshold = 10000
+                CommitThreshold = 1
             };
 
             var rp = new Report(opt);
+
+            rp.LogScore(Score.Player1, 1);
+            Assert.AreEqual(1, rp.Score(Score.Player1));
+
+            rp.LogScore(Score.Player1, 2);
+            Assert.AreEqual(2, rp.Score(Score.Player1));
+
+            rp.LogScore(Score.Player1, 1);
+            Assert.AreEqual(1, rp.Score(Score.Player1));
+
+            rp.LogScore(Score.Player1, 5);
+            Assert.AreEqual(5, rp.Score(Score.Player1));
+
+            rp = new Report(opt);
+            rp.Commit();
+
+            Assert.AreEqual(5, rp.Score(Score.Player1));
         }
     }
 }

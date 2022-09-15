@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,6 +9,7 @@ namespace AccountingModule.Data
     [Serializable]
     public class Journal
     {
+        public Dictionary<Score, long> PlayerScore = new Dictionary<Score, long>();
         public long Open { get; set; }
 
         public long Wash { get; set; }
@@ -23,11 +25,6 @@ namespace AccountingModule.Data
         public long TimeStamp { get; set; }
         public long Beat { get; set; }
 
-        public long Profit()
-        {
-            return Open - Wash;
-        }
-
         public byte[] Serialize()
         {
             byte[] bytes;
@@ -40,16 +37,5 @@ namespace AccountingModule.Data
 
             return bytes;
         }
-    }
-
-    public enum JournalType
-    {
-        Open,
-        Wash,
-        InsertCoin,
-        RefundCoin,
-        PointGain,
-        PointSpend,
-        Beat
     }
 }

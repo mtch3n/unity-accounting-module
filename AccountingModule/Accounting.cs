@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using AccountingModule.Data;
@@ -37,8 +39,26 @@ namespace AccountingModule
             _memJournal.RefundCoin += Sun(JournalType.RefundCoin);
             _memJournal.PointGain += Sun(JournalType.PointGain);
             _memJournal.PointSpend += Sun(JournalType.PointSpend);
+            _memJournal.Beat += Sun(JournalType.Beat);
+
+            foreach (var p in (Score[])Enum.GetValues(typeof(Score)))
+            {
+                var log = FindLastRecord(p.ToString());
+                if (log == null) continue;
+
+                var val = FindLastRecord(p.ToString()).Value;
+                _memJournal.PlayerScore[p] = BitConverter.ToInt64(val, 0);
+            }
 
             Commit();
+        }
+
+
+        private WalLog FindLastRecord(string key)
+        {
+            return _wal.ReportLogs()
+                .Where(log => log.Type == JournalType.Generic)
+                .LastOrDefault(log => log.Key == key);
         }
 
         public void DoArchive()
@@ -46,10 +66,6 @@ namespace AccountingModule
             Commit();
             NewJournalArchive();
             Reset();
-        }
-
-        public void Query()
-        {
         }
 
         private void NewJournalArchive()
@@ -60,7 +76,7 @@ namespace AccountingModule
             book.Write(ArchivePath());
         }
 
-        private void Commit()
+        public void Commit()
         {
             WriteJournal(JournalPath(), _memJournal.Serialize());
             Discard();
@@ -79,7 +95,10 @@ namespace AccountingModule
 
         private int Sun(JournalType type)
         {
-            return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => x.Value);
+            if (type == JournalType.Generic)
+                throw new InvalidCastException("cannot convert generic journal type to int");
+
+            return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => BitConverter.ToInt32(x.Value, 0));
         }
 
         private Journal LoadJournal(string path)
@@ -116,21 +135,41 @@ namespace AccountingModule
             return _memJournal;
         }
 
+        public Dictionary<Score, long> Score()
+        {
+            return _memJournal.PlayerScore;
+        }
+
+        public long Score(Score player)
+        {
+            return _memJournal.PlayerScore[player];
+        }
+
         public Book Archive()
         {
             return Book.Load(ArchivePath());
         }
 
-        private ReportLog NewLogEntry(JournalType type, int value)
+        private WalLog NewLogEntry(JournalType type, int value)
         {
-            return new ReportLog
+            return new WalLog
             {
                 Type = type,
+                Value = BitConverter.GetBytes(value)
+            };
+        }
+
+        private WalLog NewLogEntry(string key, byte[] value)
+        {
+            return new WalLog
+            {
+                Type = JournalType.Generic,
+                Key = key,
                 Value = value
             };
         }
 
-        private void Append(ReportLog log)
+        private void Append(WalLog log)
         {
             if (_wal.Count() >= _opt.CommitThreshold)
                 if (!_opt.NoCommit)
@@ -195,6 +234,12 @@ namespace AccountingModule
         {
             Append(NewLogEntry(JournalType.Beat, value));
             _memJournal.Beat += value;
+        }
+
+        public void LogScore(Score player, long value)
+        {
+            Append(NewLogEntry(player.ToString(), BitConverter.GetBytes(value)));
+            _memJournal.PlayerScore[player] = value;
         }
 
         #endregion
