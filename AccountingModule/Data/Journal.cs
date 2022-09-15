@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace AccountingModule.Data
 {
     [Serializable]
-    public class Ledger
+    public class Journal
     {
         public long Open { get; set; }
 
@@ -41,7 +41,7 @@ namespace AccountingModule.Data
         }
     }
 
-    public enum ReportType
+    public enum JournalType
     {
         Open,
         Wash,

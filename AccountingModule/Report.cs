@@ -9,7 +9,7 @@ namespace AccountingModule
     {
         private readonly Option _opt;
         private readonly WAL _wal;
-        private Ledger _memLedger;
+        private Journal _memJournal;
 
         public Report(Option option)
         {
@@ -21,7 +21,7 @@ namespace AccountingModule
 
         private void Prepare()
         {
-            _memLedger = LoadLedger(CommitPath());
+            _memJournal = LoadLedger(CommitPath());
             _wal.Open();
 
             if (_opt.DiscardLogs) Discard();
@@ -31,56 +31,34 @@ namespace AccountingModule
 
         private void Restore()
         {
-            _memLedger.Open += Sun(ReportType.Open);
-            _memLedger.Wash += Sun(ReportType.Wash);
-            _memLedger.InsertCoin += Sun(ReportType.InsertCoin);
-            _memLedger.RefundCoin += Sun(ReportType.RefundCoin);
-            _memLedger.PointGain += Sun(ReportType.PointGain);
-            _memLedger.PointSpend += Sun(ReportType.PointSpend);
+            _memJournal.Open += Sun(JournalType.Open);
+            _memJournal.Wash += Sun(JournalType.Wash);
+            _memJournal.InsertCoin += Sun(JournalType.InsertCoin);
+            _memJournal.RefundCoin += Sun(JournalType.RefundCoin);
+            _memJournal.PointGain += Sun(JournalType.PointGain);
+            _memJournal.PointSpend += Sun(JournalType.PointSpend);
 
             Commit();
         }
-
-        #region PathUtils
-
-        private string CommitPath()
-        {
-            return Path.GetFullPath(_opt.Path + "/data.bin");
-        }
-
-        private string ArchivePath()
-        {
-            return Path.GetFullPath(_opt.Path + "/archive.bin");
-        }
-
-        #endregion
 
         public void Archive()
         {
             Commit();
-
-            var newArchive = NewLedgerArchive();
-            WriteLedger(ArchivePath(), newArchive.Serialize());
-
+            NewLedgerArchive();
             Reset();
         }
 
-        private Ledger NewLedgerArchive()
+        private void NewLedgerArchive()
         {
-            var ledgerHistory = LoadLedger(ArchivePath());
-            ledgerHistory.Open += _memLedger.Open;
-            ledgerHistory.Wash += _memLedger.Wash;
-            ledgerHistory.InsertCoin += _memLedger.InsertCoin;
-            ledgerHistory.PointGain += _memLedger.PointGain;
-            ledgerHistory.PointSpend += _memLedger.PointSpend;
-            ledgerHistory.RefundCoin += _memLedger.RefundCoin;
+            var book = Book.Load(ArchivePath());
 
-            return ledgerHistory;
+            book.JournalArchives.Add(_memJournal);
+            book.Write(ArchivePath());
         }
 
         private void Commit()
         {
-            WriteLedger(CommitPath(), _memLedger.Serialize());
+            WriteLedger(CommitPath(), _memJournal.Serialize());
             Discard();
         }
 
@@ -91,29 +69,27 @@ namespace AccountingModule
 
         public void Reset()
         {
-            _memLedger = new Ledger();
-
-            Discard();
+            _memJournal = new Journal();
             Commit();
         }
 
-        private int Sun(ReportType type)
+        private int Sun(JournalType type)
         {
             return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => x.Value);
         }
 
-        private Ledger LoadLedger(string path)
+        private Journal LoadLedger(string path)
         {
             if (!File.Exists(path))
             {
-                var ledger = new Ledger();
-                WriteLedger(CommitPath(), ledger.Serialize());
+                var ledger = new Journal();
+                WriteLedger(path, ledger.Serialize());
                 return ledger;
             }
 
             var fs = new FileStream(path, FileMode.Open);
             var formatter = new BinaryFormatter();
-            var l = (Ledger)formatter.Deserialize(fs);
+            var l = (Journal)formatter.Deserialize(fs);
 
             fs.Close();
             return l;
@@ -131,17 +107,17 @@ namespace AccountingModule
             }
         }
 
-        public Ledger GetLedger()
+        public Journal GetLedger()
         {
-            return _memLedger;
+            return _memJournal;
         }
 
-        public Ledger GetArchive()
+        public Book GetArchive()
         {
-            return LoadLedger(ArchivePath());
+            return Book.Load(ArchivePath());
         }
 
-        private ReportLog NewLogEntry(ReportType type, int value)
+        private ReportLog NewLogEntry(JournalType type, int value)
         {
             return new ReportLog
             {
@@ -159,43 +135,61 @@ namespace AccountingModule
             _wal.Append(log);
         }
 
+        #region PathUtils
+
+        private string CommitPath()
+        {
+            return Path.GetFullPath(_opt.Path + "/data.bin");
+        }
+
+        private string ArchivePath()
+        {
+            return Path.GetFullPath(_opt.Path + "/archive.bin");
+        }
+
+        #endregion
+
         #region LogReport
 
         public void LogOpen(int value)
         {
-            Append(NewLogEntry(ReportType.Open, value));
-            _memLedger.Open += value;
+            Append(NewLogEntry(JournalType.Open, value));
+            _memJournal.Open += value;
         }
 
         public void LogWash(int value)
         {
-            Append(NewLogEntry(ReportType.Wash, value));
-            _memLedger.Wash += value;
+            Append(NewLogEntry(JournalType.Wash, value));
+            _memJournal.Wash += value;
         }
 
         public void LogInsertCoin(int value)
         {
-            Append(NewLogEntry(ReportType.InsertCoin, value));
-            _memLedger.InsertCoin += value;
+            Append(NewLogEntry(JournalType.InsertCoin, value));
+            _memJournal.InsertCoin += value;
         }
 
         public void LogRefundCoin(int value)
         {
-            Append(NewLogEntry(ReportType.RefundCoin, value));
-            _memLedger.RefundCoin += value;
+            Append(NewLogEntry(JournalType.RefundCoin, value));
+            _memJournal.RefundCoin += value;
         }
 
         public void LogPointGain(int value)
         {
-            Append(NewLogEntry(ReportType.PointGain, value));
-            _memLedger.PointGain += value;
+            Append(NewLogEntry(JournalType.PointGain, value));
+            _memJournal.PointGain += value;
         }
 
         public void LogPointSpend(int value)
         {
-            Append(NewLogEntry(ReportType.PointSpend, value));
-            _memLedger.PointSpend += value;
+            Append(NewLogEntry(JournalType.PointSpend, value));
+            _memJournal.PointSpend += value;
         }
+
+        #endregion
+
+        #region
 
         #endregion
     }

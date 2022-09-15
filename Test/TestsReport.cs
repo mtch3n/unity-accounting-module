@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using AccountingModule;
 using NUnit.Framework;
 
@@ -184,14 +185,64 @@ namespace Test
             Assert.AreEqual(1, rec.RefundCoin);
 
             rp.Archive();
-            
+
             var arc = rp.GetArchive();
-            Assert.AreEqual(1, arc.Open);
-            Assert.AreEqual(1, arc.Wash);
-            Assert.AreEqual(1, arc.InsertCoin);
-            Assert.AreEqual(1, arc.PointGain);
-            Assert.AreEqual(1, arc.PointSpend);
-            Assert.AreEqual(1, arc.RefundCoin);
+            Assert.AreEqual(1, arc.JournalArchives.Count);
+
+            var d = arc.JournalArchives.First();
+            Assert.AreEqual(1, d.Open);
+            Assert.AreEqual(1, d.Wash);
+            Assert.AreEqual(1, d.InsertCoin);
+            Assert.AreEqual(1, d.PointGain);
+            Assert.AreEqual(1, d.PointSpend);
+            Assert.AreEqual(1, d.RefundCoin);
+        }
+
+        [Test]
+        public void TestArchive2()
+        {
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/archive.bin");
+            File.Delete("/home/chenmt/tmp/data.bin");
+
+            var opt = new Option
+            {
+                Path = "/home/chenmt/tmp/",
+                CommitThreshold = 10000
+            };
+
+            var rp = new Report(opt);
+            for (var i = 0; i < 2; i++)
+            {
+                rp.LogOpen(1);
+                rp.LogWash(1);
+                rp.LogInsertCoin(1);
+                rp.LogRefundCoin(1);
+                rp.LogPointGain(1);
+                rp.LogPointSpend(1);
+
+                var rec = rp.GetLedger();
+                Assert.AreEqual(1, rec.Open);
+                Assert.AreEqual(1, rec.Wash);
+                Assert.AreEqual(1, rec.InsertCoin);
+                Assert.AreEqual(1, rec.PointGain);
+                Assert.AreEqual(1, rec.PointSpend);
+                Assert.AreEqual(1, rec.RefundCoin);
+
+                rp.Archive();
+            }
+
+            var arc = rp.GetArchive();
+
+            Assert.AreEqual(2, arc.JournalArchives.Count);
+
+            var d = arc.JournalArchives.First();
+            Assert.AreEqual(1, d.Open);
+            Assert.AreEqual(1, d.Wash);
+            Assert.AreEqual(1, d.InsertCoin);
+            Assert.AreEqual(1, d.PointGain);
+            Assert.AreEqual(1, d.PointSpend);
+            Assert.AreEqual(1, d.RefundCoin);
         }
     }
 }

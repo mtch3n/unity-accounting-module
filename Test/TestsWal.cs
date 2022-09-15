@@ -20,7 +20,7 @@ namespace Test
             for (var i = 0; i < 3; i++)
                 wal.Append(new ReportLog
                 {
-                    Type = ReportType.Open, Value = 1
+                    Type = JournalType.Open, Value = 1
                 });
 
             Assert.AreEqual(3, wal.Count());
@@ -41,7 +41,7 @@ namespace Test
             for (var i = 0; i < 3; i++)
                 wal.Append(new ReportLog
                 {
-                    Type = ReportType.Open, Value = 1
+                    Type = JournalType.Open, Value = 1
                 });
 
             wal = null;

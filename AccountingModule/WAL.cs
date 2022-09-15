@@ -168,7 +168,7 @@ namespace AccountingModule
     [Serializable]
     public class ReportLog
     {
-        public ReportType Type;
+        public JournalType Type;
         public int Value;
 
         public byte[] Serialize()
