@@ -50,7 +50,6 @@ namespace AccountingModule
 
         public void Query()
         {
-            
         }
 
         private void NewJournalArchive()
@@ -191,7 +190,7 @@ namespace AccountingModule
             Append(NewLogEntry(JournalType.PointSpend, value));
             _memJournal.PointSpend += value;
         }
-        
+
         public void LogBeat(int value)
         {
             Append(NewLogEntry(JournalType.Beat, value));

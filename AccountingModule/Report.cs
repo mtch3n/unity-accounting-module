@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+
 namespace AccountingModule
 {
     public class Report : Accounting
@@ -10,76 +13,81 @@ namespace AccountingModule
 
         public long CurrentOpen()
         {
-            return 0;
+            return Journal().Open;
         }
 
         public long CurrentWash()
         {
-            return 0;
+            return Journal().Wash;
         }
 
         public long CurrentInsertCoin()
         {
-            return 0;
+            return Journal().InsertCoin;
         }
 
         public long CurrentRefundCoin()
         {
-            return 0;
+            return Journal().RefundCoin;
         }
 
         public long CurrentProfit()
         {
-            return 0;
+            return Journal().Open - Journal().Wash;
         }
 
         public long CurrentCoinProfit()
         {
-            return 0;
+            throw new NotImplementedException();
         }
 
         public long CurrentGameBeat()
         {
-            return 0;
+            return Journal().Beat;
         }
 
         public long CurrentProfitTotal()
         {
-            return 0;
+            return CurrentProfit() + PreviousProfit();
         }
 
         public long CurrentProfitPrevious()
         {
-            return 0;
+            throw new NotImplementedException();
         }
 
         public long CurrentProfitCurrent()
         {
-            return 0;
+            throw new NotImplementedException();
         }
 
         #endregion
 
         #region previous
 
+        private int PreviousIndex()
+        {
+            return Archive().JournalArchives.Count - 2;
+        }
+
         public long PreviousOpen()
         {
-            return 0;
+            return Archive().JournalArchives[PreviousIndex()].Open;
         }
 
         public long PreviousWash()
         {
-            return 0;
+            return Archive().JournalArchives[PreviousIndex()].Wash;
         }
 
         public long PreviousInsertCoin()
         {
-            return 0;
+            return Archive().JournalArchives[PreviousIndex()].InsertCoin;
         }
 
         public long PreviousRefundCoin()
         {
-            return 0;
+            return Archive().JournalArchives[PreviousIndex()].RefundCoin;
         }
 
         public long PreviousProfit()
@@ -128,13 +136,14 @@ namespace AccountingModule
         {
         }
 
-        public void ReportCount()
+        public int ReportCount()
         {
+            return Archive().JournalArchives.Count;
         }
 
         #endregion
 
-        #region
+        #region Total
 
         public long AllProfit()
         {
