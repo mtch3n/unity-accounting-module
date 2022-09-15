@@ -6,10 +6,10 @@ using NUnit.Framework;
 namespace Test
 {
     [TestFixture]
-    public class TestsReport
+    public class TestsAccounting
     {
         [Test]
-        public void TestReport()
+        public void TestAccounting()
         {
             File.Delete("/home/chenmt/tmp/wal.bin");
             File.Delete("/home/chenmt/tmp/data.bin");
@@ -24,7 +24,7 @@ namespace Test
             rp = null;
             rp = new Report(opt);
 
-            var rec = rp.GetLedger();
+            var rec = rp.Journal();
             Assert.AreEqual(0, rec.Open);
             Assert.AreEqual(0, rec.Wash);
             Assert.AreEqual(0, rec.InsertCoin);
@@ -34,7 +34,7 @@ namespace Test
         }
 
         [Test]
-        public void TestReportResume()
+        public void TestAccountingResume()
         {
             File.Delete("/home/chenmt/tmp/wal.bin");
             File.Delete("/home/chenmt/tmp/data.bin");
@@ -51,7 +51,7 @@ namespace Test
             rp = null;
             rp = new Report(opt);
 
-            var rec = rp.GetLedger();
+            var rec = rp.Journal();
             Assert.AreEqual(1000, rec.Open);
             Assert.AreEqual(0, rec.Wash);
             Assert.AreEqual(0, rec.InsertCoin);
@@ -61,7 +61,7 @@ namespace Test
         }
 
         [Test]
-        public void TestReportCommitResume()
+        public void TestAccountingCommitResume()
         {
             File.Delete("/home/chenmt/tmp/wal.bin");
             File.Delete("/home/chenmt/tmp/data.bin");
@@ -75,12 +75,12 @@ namespace Test
             var rp = new Report(opt);
             for (var i = 0; i < 11; i++) rp.LogOpen(1);
 
-            Assert.AreEqual(11, rp.GetLedger().Open);
+            Assert.AreEqual(11, rp.Journal().Open);
 
             rp = null;
             rp = new Report(opt);
 
-            var rec = rp.GetLedger();
+            var rec = rp.Journal();
             Assert.AreEqual(11, rec.Open);
             Assert.AreEqual(0, rec.Wash);
             Assert.AreEqual(0, rec.InsertCoin);
@@ -136,7 +136,7 @@ namespace Test
             rp.LogPointGain(1);
             rp.LogPointSpend(1);
 
-            var rec = rp.GetLedger();
+            var rec = rp.Journal();
             Assert.AreEqual(1, rec.Open);
             Assert.AreEqual(1, rec.Wash);
             Assert.AreEqual(1, rec.InsertCoin);
@@ -145,7 +145,7 @@ namespace Test
             Assert.AreEqual(1, rec.RefundCoin);
 
             rp.Reset();
-            rec = rp.GetLedger();
+            rec = rp.Journal();
 
             Assert.AreEqual(0, rec.Open);
             Assert.AreEqual(0, rec.Wash);
@@ -176,7 +176,7 @@ namespace Test
             rp.LogPointGain(1);
             rp.LogPointSpend(1);
 
-            var rec = rp.GetLedger();
+            var rec = rp.Journal();
             Assert.AreEqual(1, rec.Open);
             Assert.AreEqual(1, rec.Wash);
             Assert.AreEqual(1, rec.InsertCoin);
@@ -184,9 +184,9 @@ namespace Test
             Assert.AreEqual(1, rec.PointSpend);
             Assert.AreEqual(1, rec.RefundCoin);
 
-            rp.Archive();
+            rp.DoArchive();
 
-            var arc = rp.GetArchive();
+            var arc = rp.Archive();
             Assert.AreEqual(1, arc.JournalArchives.Count);
 
             var d = arc.JournalArchives.First();
@@ -221,7 +221,7 @@ namespace Test
                 rp.LogPointGain(1);
                 rp.LogPointSpend(1);
 
-                var rec = rp.GetLedger();
+                var rec = rp.Journal();
                 Assert.AreEqual(1, rec.Open);
                 Assert.AreEqual(1, rec.Wash);
                 Assert.AreEqual(1, rec.InsertCoin);
@@ -229,10 +229,10 @@ namespace Test
                 Assert.AreEqual(1, rec.PointSpend);
                 Assert.AreEqual(1, rec.RefundCoin);
 
-                rp.Archive();
+                rp.DoArchive();
             }
 
-            var arc = rp.GetArchive();
+            var arc = rp.Archive();
 
             Assert.AreEqual(2, arc.JournalArchives.Count);
 
@@ -243,6 +243,22 @@ namespace Test
             Assert.AreEqual(1, d.PointGain);
             Assert.AreEqual(1, d.PointSpend);
             Assert.AreEqual(1, d.RefundCoin);
+        }
+
+        [Test]
+        public void TestQueryBuilder()
+        {
+            File.Delete("/home/chenmt/tmp/wal.bin");
+            File.Delete("/home/chenmt/tmp/archive.bin");
+            File.Delete("/home/chenmt/tmp/data.bin");
+
+            var opt = new Option
+            {
+                Path = "/home/chenmt/tmp/",
+                CommitThreshold = 10000
+            };
+
+            var rp = new Report(opt);
         }
     }
 }

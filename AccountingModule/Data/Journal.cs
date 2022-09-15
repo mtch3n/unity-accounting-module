@@ -21,6 +21,7 @@ namespace AccountingModule.Data
         public long PointSpend { get; set; }
 
         public long TimeStamp { get; set; }
+        public long Beat { get; set; }
 
         public long Profit()
         {
@@ -48,6 +49,7 @@ namespace AccountingModule.Data
         InsertCoin,
         RefundCoin,
         PointGain,
-        PointSpend
+        PointSpend,
+        Beat
     }
 }

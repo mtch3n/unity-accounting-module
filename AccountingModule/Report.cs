@@ -1,195 +1,190 @@
-﻿using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using AccountingModule.Data;
-
 namespace AccountingModule
 {
-    public class Report
+    public class Report : Accounting
     {
-        private readonly Option _opt;
-        private readonly WAL _wal;
-        private Journal _memJournal;
-
-        public Report(Option option)
+        public Report(Option option) : base(option)
         {
-            _opt = option;
-            _wal = new WAL(option);
-
-            Prepare();
         }
 
-        private void Prepare()
+        #region current
+
+        public long CurrentOpen()
         {
-            _memJournal = LoadLedger(CommitPath());
-            _wal.Open();
-
-            if (_opt.DiscardLogs) Discard();
-
-            Restore();
+            return 0;
         }
 
-        private void Restore()
+        public long CurrentWash()
         {
-            _memJournal.Open += Sun(JournalType.Open);
-            _memJournal.Wash += Sun(JournalType.Wash);
-            _memJournal.InsertCoin += Sun(JournalType.InsertCoin);
-            _memJournal.RefundCoin += Sun(JournalType.RefundCoin);
-            _memJournal.PointGain += Sun(JournalType.PointGain);
-            _memJournal.PointSpend += Sun(JournalType.PointSpend);
-
-            Commit();
+            return 0;
         }
 
-        public void Archive()
+        public long CurrentInsertCoin()
         {
-            Commit();
-            NewLedgerArchive();
-            Reset();
+            return 0;
         }
 
-        private void NewLedgerArchive()
+        public long CurrentRefundCoin()
         {
-            var book = Book.Load(ArchivePath());
-
-            book.JournalArchives.Add(_memJournal);
-            book.Write(ArchivePath());
+            return 0;
         }
 
-        private void Commit()
+        public long CurrentProfit()
         {
-            WriteLedger(CommitPath(), _memJournal.Serialize());
-            Discard();
+            return 0;
         }
 
-        private void Discard()
+        public long CurrentCoinProfit()
         {
-            _wal.Flush();
+            return 0;
         }
 
-        public void Reset()
+        public long CurrentGameBeat()
         {
-            _memJournal = new Journal();
-            Commit();
+            return 0;
         }
 
-        private int Sun(JournalType type)
+        public long CurrentProfitTotal()
         {
-            return _wal.ReportLogs().Where(x => x.Type == type).Sum(x => x.Value);
+            return 0;
         }
 
-        private Journal LoadLedger(string path)
+        public long CurrentProfitPrevious()
         {
-            if (!File.Exists(path))
-            {
-                var ledger = new Journal();
-                WriteLedger(path, ledger.Serialize());
-                return ledger;
-            }
-
-            var fs = new FileStream(path, FileMode.Open);
-            var formatter = new BinaryFormatter();
-            var l = (Journal)formatter.Deserialize(fs);
-
-            fs.Close();
-            return l;
+            return 0;
         }
 
-        private void WriteLedger(string path, byte[] data)
+        public long CurrentProfitCurrent()
         {
-            using (var fileStream =
-                   new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
-            {
-                using (var bw = new BinaryWriter(fileStream))
-                {
-                    bw.Write(data);
-                }
-            }
-        }
-
-        public Journal GetLedger()
-        {
-            return _memJournal;
-        }
-
-        public Book GetArchive()
-        {
-            return Book.Load(ArchivePath());
-        }
-
-        private ReportLog NewLogEntry(JournalType type, int value)
-        {
-            return new ReportLog
-            {
-                Type = type,
-                Value = value
-            };
-        }
-
-        private void Append(ReportLog log)
-        {
-            if (_wal.Count() >= _opt.CommitThreshold)
-                if (!_opt.NoCommit)
-                    Commit();
-
-            _wal.Append(log);
-        }
-
-        #region PathUtils
-
-        private string CommitPath()
-        {
-            return Path.GetFullPath(_opt.Path + "/data.bin");
-        }
-
-        private string ArchivePath()
-        {
-            return Path.GetFullPath(_opt.Path + "/archive.bin");
+            return 0;
         }
 
         #endregion
 
-        #region LogReport
+        #region previous
 
-        public void LogOpen(int value)
+        public long PreviousOpen()
         {
-            Append(NewLogEntry(JournalType.Open, value));
-            _memJournal.Open += value;
+            return 0;
         }
 
-        public void LogWash(int value)
+        public long PreviousWash()
         {
-            Append(NewLogEntry(JournalType.Wash, value));
-            _memJournal.Wash += value;
+            return 0;
         }
 
-        public void LogInsertCoin(int value)
+        public long PreviousInsertCoin()
         {
-            Append(NewLogEntry(JournalType.InsertCoin, value));
-            _memJournal.InsertCoin += value;
+            return 0;
         }
 
-        public void LogRefundCoin(int value)
+        public long PreviousRefundCoin()
         {
-            Append(NewLogEntry(JournalType.RefundCoin, value));
-            _memJournal.RefundCoin += value;
+            return 0;
         }
 
-        public void LogPointGain(int value)
+        public long PreviousProfit()
         {
-            Append(NewLogEntry(JournalType.PointGain, value));
-            _memJournal.PointGain += value;
+            return 0;
         }
 
-        public void LogPointSpend(int value)
+        public long PreviousCoinProfit()
         {
-            Append(NewLogEntry(JournalType.PointSpend, value));
-            _memJournal.PointSpend += value;
+            return 0;
+        }
+
+        public long PreviousGameBeat()
+        {
+            return 0;
+        }
+
+        public long PreviousProfitTotal()
+        {
+            return 0;
+        }
+
+        public long PreviousProfitPrevious()
+        {
+            return 0;
+        }
+
+        public long PreviousProfitCurrent()
+        {
+            return 0;
+        }
+
+        #endregion
+
+        #region util
+
+        public void RunTime()
+        {
+        }
+
+        public void GameTime()
+        {
+        }
+
+        public void LeftTime()
+        {
+        }
+
+        public void ReportCount()
+        {
         }
 
         #endregion
 
         #region
+
+        public long AllProfit()
+        {
+            return 1;
+        }
+
+        public long AllPreviousProfit()
+        {
+            return 1;
+        }
+
+        public long AllOpen()
+        {
+            return 1;
+        }
+
+        public long AllWash()
+        {
+            return 1;
+        }
+
+        public long AllInsertCoin()
+        {
+            return 1;
+        }
+
+        public long AllRefundCoin()
+        {
+            return 1;
+        }
+
+        public long AllSpend()
+        {
+            return 1;
+        }
+
+        public long AllGain()
+        {
+            return 1;
+        }
+
+        public long AllThousandths()
+        {
+            return 1;
+        }
+
+        public long AllBeat()
+        {
+            return 1;
+        }
 
         #endregion
     }
