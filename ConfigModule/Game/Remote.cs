@@ -19,6 +19,53 @@
         public int AccountingTime { get; set; }
 
         public string Password { get; set; }
+
+        public string YxndString()
+        {
+            switch (Yxnd)
+            {
+                case Yxnd.High:
+                    return "1";
+                case Yxnd.MidHigh:
+                    return "2";
+                case Yxnd.Mid:
+                    return "3";
+                case Yxnd.MidLow:
+                    return "4";
+                case Yxnd.Low:
+                    return "5";
+                default:
+                    return null;
+            }
+        }
+
+        public string YxlxString()
+        {
+            switch (Yxlx)
+            {
+                case Yxlx.Big:
+                    return "大";
+                case Yxlx.Medium:
+                    return "中";
+                case Yxlx.Small:
+                    return "小";
+                default: return null;
+            }
+        }
+
+        public string FbcxString()
+        {
+            switch (Fbcx)
+            {
+                case Fbcx.High:
+                    return "高";
+                case Fbcx.Medium:
+                    return "中";
+                case Fbcx.Low:
+                    return "低";
+                default: return null;
+            }
+        }
     }
 
     public enum Yxnd

@@ -46,9 +46,10 @@ namespace AccountingModule
                 if (log == null) continue;
 
                 var val = FindLastRecord(p.ToString()).Value;
-                if (_memJournal.PlayerScore.ContainsKey(p)) _memJournal.PlayerScore[p] = BitConverter.ToInt64(val, 0);
-
-                _memJournal.PlayerScore.Add(p, BitConverter.ToInt64(val, 0));
+                if (_memJournal.PlayerScore.ContainsKey(p))
+                    _memJournal.PlayerScore[p] = BitConverter.ToInt64(val, 0);
+                else
+                    _memJournal.PlayerScore.Add(p, BitConverter.ToInt64(val, 0));
             }
 
             foreach (var p in (PlayerBet[])Enum.GetValues(typeof(PlayerBet)))
@@ -57,9 +58,10 @@ namespace AccountingModule
                 if (log == null) continue;
 
                 var val = FindLastRecord(p.ToString()).Value;
-                if (_memJournal.PlayerBet.ContainsKey(p)) _memJournal.PlayerBet[p] = BitConverter.ToInt64(val, 0);
-
-                _memJournal.PlayerBet[p] = BitConverter.ToInt64(val, 0);
+                if (_memJournal.PlayerBet.ContainsKey(p))
+                    _memJournal.PlayerBet[p] = BitConverter.ToInt64(val, 0);
+                else
+                    _memJournal.PlayerBet[p] = BitConverter.ToInt64(val, 0);
             }
 
             Commit();
