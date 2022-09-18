@@ -62,16 +62,8 @@ namespace ConfigModule
                 Players = Players.P6,
                 BackgroundVolume = VolumeMode.PlayAll,
                 Volume = VolumeStep.S4,
-                GameMode = DefaultPlayMode(),
+                GameMode = PlayMode.ButtonRefundCoin,
                 LotteryRatio = LotteryRatio.I1
-            };
-        }
-
-        public PlayMode DefaultPlayMode()
-        {
-            return new PlayMode
-            {
-                ButtonRefundCoin = true
             };
         }
     }

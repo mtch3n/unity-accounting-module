@@ -39,16 +39,25 @@
             return null;
         }
 
-        public string PlayModeString()
+        public string GameModeString()
         {
-            if (GameMode.ButtonRefundCoin) return "按鈕退幣";
-            if (GameMode.ButtonRefundLottery) return "按鈕退彩票";
-            if (GameMode.RefundCoinInGame) return "遊戲中退幣";
-            if (GameMode.RefundLotteryInGame) return "遊戲中退彩票";
-            if (GameMode.ComType) return "通訊模式";
-            if (GameMode.PrintLotteryOnPress) return "按鍵印票";
-
-            return null;
+            switch (GameMode)
+            {
+                case PlayMode.ButtonRefundCoin:
+                    return "按鈕退幣";
+                case PlayMode.ButtonRefundLottery:
+                    return "按鈕退彩票";
+                case PlayMode.RefundCoinInGame:
+                    return "遊戲中退幣";
+                case PlayMode.RefundLotteryInGame:
+                    return "遊戲中退彩票";
+                case PlayMode.ComType:
+                    return "通訊模式";
+                case PlayMode.PrintLotteryOnPress:
+                    return "按鍵印票";
+                default:
+                    return null;
+            }
         }
 
         public string FireSpeedString()
@@ -91,6 +100,8 @@
                     return "中";
                 case TimedFiring.Fast:
                     return "快";
+                case TimedFiring.Disable:
+                    return "無";
                 default:
                     return null;
             }
@@ -214,5 +225,15 @@
         F50,
         F80,
         F100
+    }
+
+    public enum PlayMode
+    {
+        ButtonRefundCoin,
+        ButtonRefundLottery,
+        RefundCoinInGame,
+        RefundLotteryInGame,
+        ComType,
+        PrintLotteryOnPress,
     }
 }
