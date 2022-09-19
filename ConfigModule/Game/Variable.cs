@@ -143,6 +143,20 @@
         {
             return ((int)Volume).ToString();
         }
+        
+        public string PlayersString(){
+            switch (Players)
+            {
+                case Players.P6:
+                    return "6(2-1)";
+                case Players.P8:
+                    return "8(3-1)";
+                case Players.P10:
+                    return "10(3-2)";
+                default:
+                    return null;
+            }
+        }
     }
 
     public enum FireSpeed
