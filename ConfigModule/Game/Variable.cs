@@ -139,12 +139,13 @@
             }
         }
 
-        public string VolumeStepString()
+        public string VolumeString()
         {
             return ((int)Volume).ToString();
         }
-        
-        public string PlayersString(){
+
+        public string PlayersString()
+        {
             switch (Players)
             {
                 case Players.P6:
@@ -213,6 +214,18 @@
     // F => Fraction    F10 => 1/10
     public enum LotteryRatio
     {
+        F100,
+        F80,
+        F50,
+        F25,
+        F20,
+        F15,
+        F10,
+        F8,
+        F5,
+        F4,
+        F3,
+        F2,
         I1,
         I2,
         I3,
@@ -225,20 +238,7 @@
         I25,
         I50,
         I80,
-        I100,
-        F1,
-        F2,
-        F3,
-        F4,
-        F5,
-        F8,
-        F10,
-        F15,
-        F20,
-        F25,
-        F50,
-        F80,
-        F100
+        I100
     }
 
     public enum PlayMode
@@ -248,6 +248,6 @@
         RefundCoinInGame,
         RefundLotteryInGame,
         ComType,
-        PrintLotteryOnPress,
+        PrintLotteryOnPress
     }
 }

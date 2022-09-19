@@ -18,18 +18,10 @@ namespace ConfigModule
             _path = FindPath(options.Path);
         }
 
-        // private ILogger NoopLogger()
-        // {
-        //     return new NullLogger();
-        // }
-
         private string FindPath(string name)
         {
-            var p = Path.GetFullPath(name);
-
-            // _logger.LogDebug("file exists status: {Exists}", ConfigExists(p));
-
-            return p;
+            return Path.GetFullPath(name);
+            ;
         }
 
         private static bool ConfigExists(string p)
@@ -65,23 +57,16 @@ namespace ConfigModule
         {
             if (_config == null) throw new ConfigNotInitializedException("Make sure to load config before save.");
 
-            // var jsonStr = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            // _logger.LogDebug("writing config:\n {Json}", jsonStr);
-
-
             using var file = File.CreateText(_path);
-            var serializer = new JsonSerializer();
+            var serializer = new JsonSerializer
+            {
+                Formatting = Formatting.Indented
+            };
             serializer.Serialize(file, _config);
         }
 
-        // private void Validation()
-        // {
-        //     throw new NotImplementedException();
-        // }
-
         public void Load(string config = null)
         {
-            // _logger.LogDebug("loading config file from path: {Path}", _path);
             _config = config != null ? ReadConfigJson(config) : ReadConfigJson();
         }
 

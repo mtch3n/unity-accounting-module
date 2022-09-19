@@ -25,15 +25,15 @@
             switch (Yxnd)
             {
                 case Yxnd.High:
-                    return "1";
+                    return "大追殺";
                 case Yxnd.MidHigh:
-                    return "2";
+                    return "追殺";
                 case Yxnd.Mid:
-                    return "3";
+                    return "正常";
                 case Yxnd.MidLow:
-                    return "4";
+                    return "放水";
                 case Yxnd.Low:
-                    return "5";
+                    return "大放水";
                 default:
                     return null;
             }
@@ -79,15 +79,15 @@
 
     public enum Yxlx
     {
-        Big,
-        Medium,
-        Small
+        Big = 30,
+        Medium = 10,
+        Small = 0
     }
 
     public enum Fbcx
     {
-        High,
-        Medium,
-        Low
+        High = 20,
+        Medium = 10,
+        Low = 5
     }
 }
