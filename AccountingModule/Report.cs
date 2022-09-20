@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using AccountingModule.Data;
 
 namespace AccountingModule
 {
@@ -37,7 +39,7 @@ namespace AccountingModule
 
         public long CurrentCoinProfit()
         {
-            throw new NotImplementedException();
+            return PreviousCoinProfit() + ((CurrentProfit() - PreviousProfit()) / 1000);
         }
 
         public long CurrentGameBeat()
@@ -64,34 +66,41 @@ namespace AccountingModule
 
         #region previous
 
-        private int PreviousIndex()
+        private Journal PreviousJournalArchives()
         {
-            return Archive().JournalArchives.Count - 2;
+            try
+            {
+                return Archive().JournalArchives.Last();
+            }
+            catch (InvalidOperationException)
+            {
+                return new Journal();
+            }
         }
 
         public long PreviousOpen()
         {
-            return Archive().JournalArchives[PreviousIndex()].Open;
+            return PreviousJournalArchives().Open;
         }
 
         public long PreviousWash()
         {
-            return Archive().JournalArchives[PreviousIndex()].Wash;
+            return PreviousJournalArchives().Wash;
         }
 
         public long PreviousInsertCoin()
         {
-            return Archive().JournalArchives[PreviousIndex()].InsertCoin;
+            return PreviousJournalArchives().InsertCoin;
         }
 
         public long PreviousRefundCoin()
         {
-            return Archive().JournalArchives[PreviousIndex()].RefundCoin;
+            return PreviousJournalArchives().RefundCoin;
         }
 
         public long PreviousProfit()
         {
-            return 0;
+            return PreviousJournalArchives().Open - PreviousJournalArchives().Wash;
         }
 
         public long PreviousCoinProfit()
