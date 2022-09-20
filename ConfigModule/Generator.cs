@@ -12,7 +12,7 @@ namespace ConfigModule
                 Info = DefaultInfo(),
                 Remote = DefaultRemote(),
                 Variable = DefaultVariable(),
-                BillReader = DefaultBillReader(),
+                BillReader = DefaultBillReader()
             };
 
             return conf;
@@ -70,7 +70,7 @@ namespace ConfigModule
 
         public BillReader DefaultBillReader()
         {
-            return new BillReader()
+            return new BillReader
             {
                 Reader1 = 0,
                 Reader2 = 0,
@@ -87,7 +87,7 @@ namespace ConfigModule
                 Reader13 = 0,
                 Reader14 = 0,
                 Reader15 = 0,
-                Reader16 = 0,
+                Reader16 = 0
             };
         }
     }

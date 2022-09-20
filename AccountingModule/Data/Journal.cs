@@ -34,12 +34,12 @@ namespace AccountingModule.Data
 
         public void CalculateProfit(long lastProfit, long lastGain, long lastSpent)
         {
-            Profit = lastProfit + ((PointGain - lastGain) - (PointSpend - lastSpent)) / 1000;
+            Profit = lastProfit + (PointGain - lastGain - (PointSpend - lastSpent)) / 1000;
         }
 
         public void CalculateProfitCoin(long lastProfitCoin, long lastProfitPoint)
         {
-            ProfitCoin = lastProfitCoin + ((ProfitPoint - lastProfitPoint) / 1000);
+            ProfitCoin = lastProfitCoin + (ProfitPoint - lastProfitPoint) / 1000;
         }
 
         public byte[] Serialize()

@@ -39,7 +39,7 @@ namespace AccountingModule
 
         public long CurrentCoinProfit()
         {
-            return PreviousCoinProfit() + ((CurrentProfit() - PreviousProfit()) / 1000);
+            return PreviousCoinProfit() + (CurrentProfit() - PreviousProfit()) / 1000;
         }
 
         public long CurrentGameBeat()
