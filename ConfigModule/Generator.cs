@@ -11,7 +11,8 @@ namespace ConfigModule
             {
                 Info = DefaultInfo(),
                 Remote = DefaultRemote(),
-                Variable = DefaultVariable()
+                Variable = DefaultVariable(),
+                BillReader = DefaultBillReader(),
             };
 
             return conf;
@@ -26,7 +27,7 @@ namespace ConfigModule
                 TypeNo = "1234",
                 MachineNo = "12345678",
                 ConfirmCode = "9876543210test",
-                Password = "fcdb4b423f4e5283afa249d762ef6aef150e91fccd810d43e5e719d14512dec7" //0 x16
+                Password = "33cdbc3872b3789776eff6178cd7585d9c9b080c752aa4e92c274d768e2a7ea2" //1234567812345678
             };
         }
 
@@ -42,7 +43,7 @@ namespace ConfigModule
                 ScoreOpenMax = 500000,
                 BeatingLimit = 3000000,
                 AccountingTime = 30, //day
-                Password = "7e071fd9b023ed8f18458a73613a0834f6220bd5cc50357ba3493c6040a9ea8c" //00000000
+                Password = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f" //12345678
             };
         }
 
@@ -64,6 +65,29 @@ namespace ConfigModule
                 Volume = VolumeStep.S4,
                 GameMode = PlayMode.ButtonRefundCoin,
                 LotteryRatio = LotteryRatio.I1
+            };
+        }
+
+        public BillReader DefaultBillReader()
+        {
+            return new BillReader()
+            {
+                Reader1 = 0,
+                Reader2 = 0,
+                Reader3 = 0,
+                Reader4 = 0,
+                Reader5 = 0,
+                Reader6 = 0,
+                Reader7 = 0,
+                Reader8 = 0,
+                Reader9 = 0,
+                Reader10 = 0,
+                Reader11 = 0,
+                Reader12 = 0,
+                Reader13 = 0,
+                Reader14 = 0,
+                Reader15 = 0,
+                Reader16 = 0,
             };
         }
     }
