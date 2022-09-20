@@ -79,10 +79,33 @@ namespace AccountingModule
         {
             Commit();
             NewJournalArchive();
+            WriteBook();
             Reset();
         }
 
+        public Journal CurrentReport()
+        {
+            NewJournalArchive();
+            return _memJournal;
+        }
+
         private void NewJournalArchive()
+        {
+            Journal lastJournal;
+            if (Archive().JournalArchives.Count == 0)
+            {
+                lastJournal = new Journal();
+            }
+            else
+            {
+                lastJournal = Archive().JournalArchives.Last();
+            }
+
+            _memJournal.CalculateProfit(lastJournal.Profit, lastJournal.PointGain, lastJournal.PointSpend);
+            _memJournal.CalculateProfitCoin(lastJournal.ProfitCoin, lastJournal.ProfitPoint);
+        }
+
+        private void WriteBook()
         {
             var book = Book.Load(ArchivePath());
 

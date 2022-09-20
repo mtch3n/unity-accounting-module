@@ -23,8 +23,24 @@ namespace AccountingModule.Data
 
         public long PointSpend { get; set; }
 
+        public long Profit { get; set; }
+
+        public long ProfitPoint => Open - Wash;
+
+        public long ProfitCoin { get; set; }
+
         public long TimeStamp { get; set; }
         public long Beat { get; set; }
+
+        public void CalculateProfit(long lastProfit, long lastGain, long lastSpent)
+        {
+            Profit = lastProfit + ((PointGain - lastGain) - (PointSpend - lastSpent)) / 1000;
+        }
+
+        public void CalculateProfitCoin(long lastProfitCoin, long lastProfitPoint)
+        {
+            ProfitCoin = lastProfitCoin + ((ProfitPoint - lastProfitPoint) / 1000);
+        }
 
         public byte[] Serialize()
         {
