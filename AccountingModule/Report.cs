@@ -14,52 +14,56 @@ namespace AccountingModule
 
         public long CurrentOpen()
         {
-            return Journal().Open;
+            return CurrentReport().Open;
         }
 
         public long CurrentWash()
         {
-            return Journal().Wash;
+            return CurrentReport().Wash;
         }
 
         public long CurrentInsertCoin()
         {
-            return Journal().InsertCoin;
+            return CurrentReport().InsertCoin;
         }
 
         public long CurrentRefundCoin()
         {
-            return Journal().RefundCoin;
+            return CurrentReport().RefundCoin;
         }
 
-        public long CurrentProfit()
+        public long CurrentProfitPoint()
         {
-            return Journal().Open - Journal().Wash;
+            return CurrentReport().ProfitPoint;
         }
 
         public long CurrentCoinProfit()
         {
-            return PreviousCoinProfit() + (CurrentProfit() - PreviousProfit()) / 1000;
+            return CurrentReport().ProfitCoin;
         }
 
         public long CurrentGameBeat()
         {
-            return Journal().Beat;
+            return CurrentReport().Beat;
         }
 
-        public long CurrentProfitTotal()
+        #endregion
+
+        #region CurrentTotal
+
+        public long ProfitTotal()
         {
-            return CurrentProfit() + PreviousProfit();
+            return CurrentReport().Profit + PreviousJournalArchives().Profit;
         }
 
-        public long CurrentProfitPrevious()
+        public long PreviousProfit()
         {
-            throw new NotImplementedException();
+            return PreviousJournalArchives().Profit;
         }
 
-        public long CurrentProfitCurrent()
+        public long CurrentProfit()
         {
-            throw new NotImplementedException();
+            return CurrentReport().Profit;
         }
 
         #endregion
@@ -98,34 +102,19 @@ namespace AccountingModule
             return PreviousJournalArchives().RefundCoin;
         }
 
-        public long PreviousProfit()
+        public long PreviousProfitPoint()
         {
-            return PreviousJournalArchives().Open - PreviousJournalArchives().Wash;
+            return PreviousJournalArchives().ProfitPoint;
         }
 
         public long PreviousCoinProfit()
         {
-            return 0;
+            return PreviousJournalArchives().ProfitCoin;
         }
 
         public long PreviousGameBeat()
         {
-            return 0;
-        }
-
-        public long PreviousProfitTotal()
-        {
-            return 0;
-        }
-
-        public long PreviousProfitPrevious()
-        {
-            return 0;
-        }
-
-        public long PreviousProfitCurrent()
-        {
-            return 0;
+            return PreviousJournalArchives().Beat;
         }
 
         #endregion
@@ -153,54 +142,66 @@ namespace AccountingModule
 
         #region Total
 
-        public long AllProfit()
+        public long TotalProfit()
         {
-            return 1;
+            return ProfitTotal();
         }
 
-        public long AllPreviousProfit()
+        public long TotalPreviousProfit()
         {
-            return 1;
+            return PreviousProfit();
+        }
+
+        public long TotalCurrentProfit()
+        {
+            return CurrentProfit();
         }
 
         public long AllOpen()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.Open);
+            return v + CurrentReport().Open;
         }
 
         public long AllWash()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.Wash);
+            return v + CurrentReport().Wash;
         }
 
         public long AllInsertCoin()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.InsertCoin);
+            return v + CurrentReport().InsertCoin;
         }
 
         public long AllRefundCoin()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.RefundCoin);
+            return v + CurrentReport().RefundCoin;
         }
 
         public long AllSpend()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.PointSpend);
+            return v + CurrentReport().PointSpend;
         }
 
         public long AllGain()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.PointGain);
+            return v + CurrentReport().PointGain;
         }
 
         public long AllThousandths()
         {
-            return 1;
+            return AllGain() / AllSpend() * 1000;
         }
 
         public long AllBeat()
         {
-            return 1;
+            var v = Archive().JournalArchives.Sum(x => x.Beat);
+            return v + CurrentReport().Beat;
         }
 
         #endregion
