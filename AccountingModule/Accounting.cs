@@ -120,8 +120,28 @@ namespace AccountingModule
 
         public void Reset()
         {
-            _memJournal = new Journal();
+            var tmp = new Journal();
+
+            //save generic journals
+            if (_opt.PreservePlayerLogs)
+            {
+                tmp.PlayerBet = _memJournal.PlayerBet;
+                tmp.PlayerScore = _memJournal.PlayerScore;
+            }
+
+            _memJournal = tmp;
             Commit();
+        }
+
+        public void FullReset()
+        {
+            Reset();
+            ResetArchives();
+        }
+
+        private void ResetArchives()
+        {
+            File.Delete(ArchivePath());
         }
 
         private int Sun(JournalType type)

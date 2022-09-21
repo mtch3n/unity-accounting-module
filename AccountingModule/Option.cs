@@ -9,5 +9,7 @@ namespace AccountingModule
         public bool DiscardLogs { get; set; } = false;
         public bool NoCommit { get; set; } = false;
         public bool MemWal { get; set; } = false;
+
+        public bool PreservePlayerLogs { get; set; } = true;
     }
 }
