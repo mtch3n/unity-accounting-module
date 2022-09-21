@@ -27,6 +27,7 @@ namespace ConfigModule
                 TypeNo = "1234",
                 MachineNo = "12345678",
                 ConfirmCode = "9876543210test",
+                ResetCount = 0,
                 Password = "33cdbc3872b3789776eff6178cd7585d9c9b080c752aa4e92c274d768e2a7ea2" //1234567812345678
             };
         }
